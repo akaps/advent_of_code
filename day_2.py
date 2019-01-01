@@ -3,6 +3,24 @@ import collections
 class Checksum:
     def __init__(self, ids):
         self.checksum = self.generate_checksum(ids)
+        self.matched = self.find_match(ids)
+
+    def find_match(self, ids):
+        processed = []
+        for id in ids:
+            id = id.strip()
+            for to_process in processed:
+                matches = self.matches(id, to_process)
+                if len(matches) == len(id) - 1:
+                    return matches
+            processed.append(id)
+
+    def matches(self, id, to_process):
+        matches = ''
+        for i in range(0, len(id)):
+            if id[i] == to_process[i]:
+                matches += id[i]
+        return matches
 
     def generate_checksum(self, ids):
         twos = 0
@@ -25,4 +43,5 @@ ids = file.readlines()
 file.close()
 
 res = Checksum(ids)
-print 'checksum is {sum}'.format(sum = res.checksum)
+print 'checksum is: {sum}'.format(sum=res.checksum)
+print 'matched letters are: {matched}'.format(matched=res.matched)

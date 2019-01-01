@@ -10,13 +10,12 @@ class Frequency:
 
     def frequency(self, freqs):
         for freq in freqs:
-            self.total += long(freq)
+            self.total += int(freq)
             self.update_first_repeat(self.total)
 
     def update_first_repeat(self, new_val):
         if self.first_repeat is None:
             if new_val in self.processed:
-                print 'found!'
                 self.first_repeat = new_val
             else:
                 self.processed.add(new_val)
@@ -26,5 +25,5 @@ freqs = file.readlines()
 file.close()
 
 res = Frequency(freqs)
-print 'sequence results in {freq}'.format(freq = res.total)
-print 'first repeat is at {repeat}'.format(repeat = res.first_repeat)
+print('sequence results in {freq}'.format(freq = res.total))
+print('first repeat is at {repeat}'.format(repeat = res.first_repeat))

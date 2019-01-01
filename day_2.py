@@ -43,5 +43,5 @@ ids = file.readlines()
 file.close()
 
 res = Checksum(ids)
-print 'checksum is: {sum}'.format(sum=res.checksum)
-print 'matched letters are: {matched}'.format(matched=res.matched)
+print('checksum is: {sum}'.format(sum=res.checksum))
+print('matched letters are: {matched}'.format(matched=res.matched))

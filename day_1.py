@@ -1,26 +1,30 @@
 #starting at 0, report the correct frequency
 #each line is a modifier of the current frequency
-def total(freqs):
-    curr_freq = 0
-    for freq in freqs:
-        curr_freq += int(freq)
-    return curr_freq
+class Frequency:
+    def __init__(self, freqs):
+        self.first_repeat = None
+        self.processed = {0}
+        self.total = 0
+        while self.first_repeat is None:
+            self.frequency(freqs)
 
-def first_repeat(freqs):
-    prev_freqs = set()
-    curr_freq = 0
-    for freq in freqs:
-        curr_freq += int(freq)
-        if curr_freq in prev_freqs:
-            return curr_freq
-        prev_freqs.add(curr_freq)
-    print 'Could not find a duplicate'
-    return -1
+    def frequency(self, freqs):
+        for freq in freqs:
+            self.total += long(freq)
+            self.update_first_repeat(self.total)
+
+    def update_first_repeat(self, new_val):
+        if self.first_repeat is None:
+            if new_val in self.processed:
+                print 'found!'
+                self.first_repeat = new_val
+            else:
+                self.processed.add(new_val)
 
 file = open('day_1_input.txt', 'r')
 freqs = file.readlines()
-print 'ending frequency'
-print total(freqs)
-print 'first repeat'
-print first_repeat(freqs)
 file.close()
+
+res = Frequency(freqs)
+print 'sequence results in {freq}'.format(freq = res.total)
+print 'first repeat is at {repeat}'.format(repeat = res.first_repeat)

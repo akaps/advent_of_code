@@ -39,9 +39,9 @@ class Checksum:
         return twos * threes
 
 file = open('day_2_input.txt', 'r')
-ids = file.readlines()
+id_list = file.readlines()
 file.close()
 
-res = Checksum(ids)
+res = Checksum(id_list)
 print('checksum is: {sum}'.format(sum=res.checksum))
 print('matched letters are: {matched}'.format(matched=res.matched))

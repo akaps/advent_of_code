@@ -18,7 +18,7 @@ def parse_lines(lines):
 class Overlap:
     def __init__(self, file_name):
         self.fabric = [[0 for _ in range(0, 1000)] for _ in range(0, 1000)]
-        file = open(file_name)
+        file = open(file_name, 'r')
         self.cuts = parse_lines(file.readlines())
         file.close()
         self.process_cuts()

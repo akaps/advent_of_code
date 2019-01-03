@@ -3,9 +3,24 @@ import time
 from datetime import datetime
 
 class SleepingGuards:
+
     def __init__(self, lines):
         self.messages = self.parse_messages(lines)
         self.guards_schedule = {} #id: tuple of times asleep
+
+    def find_most_common_time(self):
+        guard_times = {}
+        guard_select = {}
+        for guard in self.guards_schedule:
+            timetable = self.generate_timetable(guard)
+            max_times = max(timetable)
+            guard_times[guard] = max_times
+            max_time =  timetable.index(max_times)
+            guard_select[guard] = max_time
+        guard = max(guard_times, key=lambda key: guard_times[key])
+        print(guard)
+        print(guard_select[guard])
+        return guard, guard_select[guard]
 
     def find_most_minutes_asleep(self):
         guards = {} #id: minutes asleep
@@ -30,11 +45,15 @@ class SleepingGuards:
         return guard_id
 
     def find_time_most_asleep(self, guard):
+        timetable = self.generate_timetable(guard)
+        return timetable.index(max(timetable))
+
+    def generate_timetable(self, guard):
         timetable = [0 for _ in range(0, 59)]
         for (start, end) in self.guards_schedule[guard]:
             for i in range(start.time().minute, end.time().minute):
                 timetable[i] += 1
-        return timetable.index(max(timetable))
+        return timetable
 
     #regular expressions
     # all things: ^\[[0-9]{4}(-[0-9]{2}){2} [0-9]{2}:[0-9]{2}\] (Guard #[0-9]* begins shift|falls asleep|wakes up)$
@@ -69,7 +88,14 @@ messages = file.readlines()
 file.close()
 sched = SleepingGuards(messages)
 guard_id = sched.find_most_minutes_asleep()
+print('Strategy 1: Guard most often asleep')
 print('Guard #{id} spend the most time asleep'.format(id=guard_id))
 time = sched.find_time_most_asleep(guard_id)
-print('Guard #{id} slept most often at minute {min} '.format(id=guard_id, min=time))
+print('Guard #{id} slept most often at minute {min}'.format(id=guard_id, min=time))
+print('answer is {ans}'.format(ans=guard_id*time))
+
+print()
+print('Strategy 2: Guard asleep most at same time')
+(guard_id, time) = sched.find_most_common_time()
+print('Guard #{id} slept most often at minute {min}'.format(id=guard_id, min=time))
 print('answer is {ans}'.format(ans=guard_id*time))

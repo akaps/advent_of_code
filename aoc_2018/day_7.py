@@ -16,17 +16,14 @@ class Dependencies:
             if depends_on not in self.dependencies:
                 self.dependencies[depends_on] = []
             self.dependencies[step].append(depends_on)
-        print(self.dependencies)
 
     def order(self):
         res =''
         while self.dependencies:
             steps = list(self.dependencies.keys())
             steps.sort()
-            print(steps)
             for step in steps:
                 if len(self.dependencies[step]) == 0:
-                    print(step)
                     res += step
                     self.dependencies.pop(step)
                     for step_2 in self.dependencies:

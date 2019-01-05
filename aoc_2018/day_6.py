@@ -43,6 +43,18 @@ class Coordinates:
         winner = max(res, key=lambda key: res[key])
         return (winner, res[winner])
 
+    def find_safest_area(self):
+        total = 0
+        for x in range(self.x_min, self.x_max):
+            for y in range(self.y_min, self.y_max):
+                dist = []
+                for coordinate in self.coordinates:
+                    dist.append(manhattan_distance(coordinate, (x,y )))
+                total_dist = sum(dist)
+                if total_dist < 10000:
+                    total += 1
+        return total
+
 def manhattan_distance(origin, dest):
     return abs(origin[0] - dest[0]) + abs(origin[1] - dest[1])
 
@@ -52,3 +64,4 @@ file.close()
 res = Coordinates(origins)
 point, area = res.calculate_areas()
 print('largest area at {point}, totals {area}'.format(point=point, area=area))
+print('safest region is {area} units large'.format(area=res.find_safest_area()))

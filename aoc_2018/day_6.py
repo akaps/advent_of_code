@@ -12,15 +12,12 @@ class Coordinates:
         for coord in coordinates:
             (x, y) = re.split(', ', coord.strip())
             self.coordinates.append(((int)(x), (int)(y)))
-        print(self.coordinates)
         xs = lambda a: a[0]
         ys = lambda a: a[1]
         self.x_min = min(self.coordinates, key=xs)[0]
         self.x_max = max(self.coordinates, key=xs)[0]
         self.y_min = min(self.coordinates, key=ys)[1]
         self.y_max = max(self.coordinates, key=ys)[1]
-        print('x bounds = {min}, {max}'.format(min=self.x_min, max=self.x_max))
-        print('y bounds = {min}, {max}'.format(min=self.y_min, max=self.y_max))
 
     def bounded(self, coordinate):
         return (self.x_min != coordinate[0] or

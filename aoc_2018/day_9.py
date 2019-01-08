@@ -1,30 +1,55 @@
 import re
 
+class Marble:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+    def __repr__(self):
+        return '{l}<-{v}->{r}'.format(l=self.left.val, v=self.val, r=self.right.val)
+
 def play_game(input):
     players, last_marble = parse_input(input)
-    to_play = [i for i in range(last_marble + 1) if i != 0]
+    to_play = range(2, last_marble + 1)
     list_players = [0] * players
-    circle = [0]
-    current_marble = 0
+    zero = current_marble = Marble(0)
+    next = Marble(1)
+    next.left, next.right = current_marble, current_marble
+    current_marble.left, current_marble.right = next, next
+    current_marble = current_marble.right
     current_player = 0
-    while to_play:
-        #print(circle)
-        #print('player_scores: {scores}'.format(scores=list_players))
-        next_marble = to_play.pop(0)
+    for next_marble in to_play:
         if not next_marble % 23:
-            #print('buzz')
-            to_remove = (current_marble - 7 + len(circle)) % len(circle)
-            removed = circle.pop(to_remove)
-            #print(removed)
-            list_players[current_player] += next_marble + removed
-            current_marble = to_remove % len(circle)
+            removed = current_marble.left.left.left.left.left.left.left
+            removed.left.right, removed.right.left = removed.right, removed.left
+            current_marble = removed.right
+            list_players[current_player] += next_marble + removed.val
         else:
-            where_to_play = (current_marble + 1) % len(circle) + 1
-            circle.insert(where_to_play, next_marble)
-            current_marble = where_to_play
-        current_player += 1
-        current_player %= len(list_players)
+            to_add = Marble(next_marble)
+            current_marble = current_marble.right #hack to get my bad math to work :)
+            to_add.left, to_add.right = current_marble, current_marble.right
+            to_add.right.left = to_add
+            current_marble.right = to_add
+            current_marble = to_add
+        current_player = (current_player + 1) % len(list_players)
     return max(list_players)
+
+def rep(curr):
+    res = [curr.val]
+    curr = curr.right
+    while curr.val != 0:
+        res.append(curr.val)
+        curr = curr.right
+    return res
+
+def rep_backwards(curr):
+    res = [curr.val]
+    curr = curr.left
+    while curr.val != 0:
+        res.append(curr.val)
+        curr = curr.left
+    return res
 
 def parse_input(input):
     vals = re.split('^| players; last marble is worth | points$', input)
@@ -37,18 +62,22 @@ sample_4 = '17 players; last marble is worth 1104 points'
 sample_5 = '21 players; last marble is worth 6111 points'
 sample_6 = '30 players; last marble is worth 5807 points'
 input = '428 players; last marble is worth 72061 points'
+input_10 = '428 players; last marble is worth 720610 points'
+input_100 = '428 players; last marble is worth 7206100 points'
 
 print('Should be 32')
 print('Answer is {ans}'.format(ans=play_game(sample_1)))
-print('Should be 8317')
-print('Answer is {ans}'.format(ans=play_game(sample_2)))
-print('Should be 146373')
-print('Answer is {ans}'.format(ans=play_game(sample_3)))
-print('Should be 2764')
-print('Answer is {ans}'.format(ans=play_game(sample_4)))
-print('Should be 54718')
-print('Answer is {ans}'.format(ans=play_game(sample_5)))
-print('Should be 37305')
-print('Answer is {ans}'.format(ans=play_game(sample_6)))
-print('If above is true, this should work')
-print('Answer is {ans}'.format(ans=play_game(input)))
+# print('Should be 8317')
+# print('Answer is {ans}'.format(ans=play_game(sample_2)))
+# print('Should be 146373')
+# print('Answer is {ans}'.format(ans=play_game(sample_3)))
+# print('Should be 2764')
+# print('Answer is {ans}'.format(ans=play_game(sample_4)))
+# print('Should be 54718')
+# print('Answer is {ans}'.format(ans=play_game(sample_5)))
+# print('Should be 37305')
+# print('Answer is {ans}'.format(ans=play_game(sample_6)))
+# print('If above is true, this should work')
+# print('Answer is {ans}'.format(ans=play_game(input)))
+#print('Answer to part 2')
+#print(play_game(input_100))

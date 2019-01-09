@@ -53,10 +53,8 @@ class Constellations:
         # PIL accesses images in Cartesian co-ordinates, so it is Image[columns, rows]
         img = Image.new('RGB', (x_range, y_range), 'black') # create a new black image
         pixels = img.load() # create the pixel map
-
         for star in self.stars:
             pixels[star.coord.x + x_min, star.coord.y + y_min] = (255, 0, 100) # set the colour accordingly
-
         img.show()
 
     def update(self):

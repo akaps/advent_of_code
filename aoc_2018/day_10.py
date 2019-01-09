@@ -1,4 +1,5 @@
 import re
+from PIL import Image
 
 class Point:
     def __init__(self, x, y):
@@ -42,20 +43,21 @@ class Constellations:
                 (int)(line[3]),
                 (int)(line[4])))
 
-    def __repr__(self):
+    def show(self):
         x_min = min(self.stars, key=lambda a: a.coord.x).coord.x
         x_max = max(self.stars, key=lambda a: a.coord.x).coord.x
         y_min = min(self.stars, key=lambda a: a.coord.y).coord.y
         y_max = max(self.stars, key=lambda a: a.coord.y).coord.y
-        res = ''
-        for y in range(y_min, y_max + 1):
-            for x in range(x_min, x_max + 1):
-                if Star(x, y, 0, 0) in self.stars:
-                    res += '#'
-                else:
-                    res += '.'
-            res += '\n'
-        return res
+        x_range = x_max - x_min + 1
+        y_range = y_max - y_min + 1
+        # PIL accesses images in Cartesian co-ordinates, so it is Image[columns, rows]
+        img = Image.new('RGB', (x_range, y_range), 'black') # create a new black image
+        pixels = img.load() # create the pixel map
+
+        for star in self.stars:
+            pixels[star.coord.x + x_min, star.coord.y + y_min] = (255, 0, 100) # set the colour accordingly
+
+        img.show()
 
     def update(self):
         for star in self.stars:
@@ -68,5 +70,5 @@ stars = Constellations(input)
 for i in range(0, 5):
     print('step {i}'.format(i=i))
     print('-----')
-    print(stars)
+    stars.show()
     stars.update()

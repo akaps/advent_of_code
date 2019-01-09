@@ -58,7 +58,7 @@ class Constellations:
             prev_size = self.ranges.x * self.ranges.y
             self.update(1)
             curr = self.ranges.x * self.ranges.y
-        print(i)
+        print(i-1)
         self.update(-1)
         self.show()
 

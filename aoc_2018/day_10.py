@@ -17,13 +17,16 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def __mul__(self, incr):
+        return Point(self.x * incr, self.y * incr)
+
 class Star:
     def __init__(self, x, y, dx, dy):
         self.coord = Point(x, y)
         self.delta_coord = Point(dx, dy)
 
-    def update(self):
-        self.coord = self.coord + self.delta_coord
+    def update(self, incr):
+        self.coord = self.coord + (self.delta_coord * incr)
 
     def __repr__(self):
         return str(self.coord)
@@ -51,10 +54,9 @@ class Constellations:
         while x_range * y_range < prev_size:
             prev_size = x_range * y_range
             print(prev_size)
-            prev = copy.deepcopy(self.stars)
-            self.update()
+            self.update(1)
             x_range, y_range = self.get_bounds()
-        self.stars = prev
+        self.update(-1)
         self.show()
 
     def get_bounds(self):
@@ -80,14 +82,14 @@ class Constellations:
         img = Image.new('RGB', (x_range, y_range), 'black') # create a new black image
         pixels = img.load() # create the pixel map
         for star in self.stars:
-            pixels[star.coord.x + x_min, star.coord.y + y_min] = (255, 0, 100) # set the colour accordingly
+            pixels[star.coord.x + x_min, star.coord.y + y_min] = (254, 0, 100) # set the colour accordingly
         img.show()
 
-    def update(self):
+    def update(self, incr):
         for star in self.stars:
-            star.update()
+            star.update(incr)
 
-file = open('day_10_input.txt')
+file = open('day_10_sample.txt')
 input = file.readlines()
 file.close()
 stars = Constellations(input)

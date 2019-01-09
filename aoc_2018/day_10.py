@@ -17,8 +17,8 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
-    def __mul__(self, incr):
-        return Point(self.x * incr, self.y * incr)
+    def __mul__(self, scalar):
+        return Point(self.x * scalar, self.y * scalar)
 
 class Star:
     def __init__(self, x, y, dx, dy):
@@ -51,10 +51,11 @@ class Constellations:
 
     def find_letters(self):
         prev_size = math.inf
-        while self.x_range * self.y_range < prev_size:
-            prev_size = self.x_range * self.y_range
-            print(prev_size)
+        curr = self.ranges.x * self.ranges.y
+        while curr < prev_size:
+            prev_size = self.ranges.x * self.ranges.y
             self.update(1)
+            curr = self.ranges.x * self.ranges.y
         self.update(-1)
         self.show()
 
@@ -62,8 +63,8 @@ class Constellations:
         xs = (self.x_min(), max(self.stars, key=lambda a: a.coord.x).coord.x)
         ys = (self.y_min(), max(self.stars, key=lambda a: a.coord.y).coord.y)
         self.bounds = Point(xs, ys)
-        self.x_range = self.bounds.x[1] - self.bounds.x[0]
-        self.y_range = self.bounds.y[1] - self.bounds.y[0]
+        self.ranges = Point(self.bounds.x[1] - self.bounds.x[0],
+                            self.bounds.y[1] - self.bounds.y[0])
 
     def x_min(self):
         return min(self.stars, key=lambda a: a.coord.x).coord.x
@@ -73,12 +74,10 @@ class Constellations:
 
     def show(self):
         # PIL accesses images in Cartesian co-ordinates, so it is Image[columns, rows]
-        x_min = self.x_min()
-        y_min = self.y_min()
-        img = Image.new('RGB', (self.x_range + 1, self.y_range + 1), 'black') # create a new black image
+        img = Image.new('RGB', (self.ranges.x + 1, self.ranges.y + 1), 'black') # create a new black image
         pixels = img.load() # create the pixel map
         for star in self.stars:
-            pixels[star.coord.x + x_min, star.coord.y + y_min] = (254, 0, 100) # set the colour accordingly
+            pixels[star.coord.x + self.bounds.x[0], star.coord.y + self.bounds.y[0]] = (254, 0, 100) # set the colour accordingly
         img.show()
 
     def update(self, incr):

@@ -1,5 +1,7 @@
 import re
 from PIL import Image
+import copy
+import math
 
 class Point:
     def __init__(self, x, y):
@@ -43,14 +45,38 @@ class Constellations:
                 (int)(line[3]),
                 (int)(line[4])))
 
-    def show(self):
-        x_min = min(self.stars, key=lambda a: a.coord.x).coord.x
+    def find_letters(self):
+        x_range, y_range = self.get_bounds()
+        prev_size = math.inf
+        while x_range * y_range < prev_size:
+            prev_size = x_range * y_range
+            print(prev_size)
+            prev = copy.deepcopy(self.stars)
+            self.update()
+            x_range, y_range = self.get_bounds()
+        self.stars = prev
+        self.show()
+
+    def get_bounds(self):
+        x_min = self.x_min()
         x_max = max(self.stars, key=lambda a: a.coord.x).coord.x
-        y_min = min(self.stars, key=lambda a: a.coord.y).coord.y
+        y_min = self.y_min()
         y_max = max(self.stars, key=lambda a: a.coord.y).coord.y
         x_range = x_max - x_min + 1
         y_range = y_max - y_min + 1
+        return x_range, y_range
+
+    def x_min(self):
+        return min(self.stars, key=lambda a: a.coord.x).coord.x
+
+    def y_min(self):
+        return min(self.stars, key=lambda a: a.coord.y).coord.y
+
+    def show(self):
         # PIL accesses images in Cartesian co-ordinates, so it is Image[columns, rows]
+        x_range, y_range = self.get_bounds()
+        x_min = self.x_min()
+        y_min = self.y_min()
         img = Image.new('RGB', (x_range, y_range), 'black') # create a new black image
         pixels = img.load() # create the pixel map
         for star in self.stars:
@@ -61,12 +87,8 @@ class Constellations:
         for star in self.stars:
             star.update()
 
-file = open('day_10_sample.txt')
+file = open('day_10_input.txt')
 input = file.readlines()
 file.close()
 stars = Constellations(input)
-for i in range(0, 5):
-    print('step {i}'.format(i=i))
-    print('-----')
-    stars.show()
-    stars.update()
+stars.find_letters()

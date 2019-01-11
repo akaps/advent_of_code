@@ -58,13 +58,12 @@ class Constellations:
             prev_size = self.ranges.x * self.ranges.y
             self.update(1)
             curr = self.ranges.x * self.ranges.y
-        print(i-1)
         self.update(-1)
         self.show()
 
     def get_bounds(self):
-        xs = (self.x_min(), max(self.stars, key=lambda a: a.coord.x).coord.x)
-        ys = (self.y_min(), max(self.stars, key=lambda a: a.coord.y).coord.y)
+        xs = (self.x_min(), self.x_max())
+        ys = (self.y_min(), self.y_max())
         self.bounds = Point(xs, ys)
         self.ranges = Point(self.bounds.x[1] - self.bounds.x[0],
                             self.bounds.y[1] - self.bounds.y[0])
@@ -72,19 +71,21 @@ class Constellations:
     def x_min(self):
         return min(self.stars, key=lambda a: a.coord.x).coord.x
 
+    def x_max(self):
+        return max(self.stars, key=lambda a: a.coord.x).coord.x
+
     def y_min(self):
         return min(self.stars, key=lambda a: a.coord.y).coord.y
 
+    def y_max(self):
+        return max(self.stars, key=lambda a: a.coord.y).coord.y
+
     def show(self):
         # PIL accesses images in Cartesian co-ordinates, so it is Image[columns, rows]
-        img = Image.new('RGB', (1000, 1000), 'black') # create a new black image
+        img = Image.new('RGB', (self.x_max() - self.x_min() +1, self.y_max() - self.y_min() +1), 'black') # create a new black image
         pixels = img.load() # create the pixel map
-        print('image bounds = {x}, {y}'.format(x=self.ranges.x + 1, y=self.ranges.y + 1))
-        print('offsets = {x}, {y}'.format(x=self.bounds.x[0], y=self.bounds.y[0]))
         for star in self.stars:
-            print('coords = {x}, {y}'.format(x=star.coord.x, y=star.coord.y))
-            print('adjusted coords = ({x}, {y})'.format(x=star.coord.x + self.bounds.x[0], y=star.coord.y + self.bounds.y[0]))
-            pixels[star.coord.x, star.coord.y] = (254, 0, 100) # set the colour accordingly
+            pixels[star.coord.x - self.x_min(), star.coord.y - self.y_min()] = (254, 0, 100) # set the colour accordingly
         img.show()
 
     def update(self, incr):

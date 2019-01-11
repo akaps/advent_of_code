@@ -53,5 +53,5 @@ assert x == 21
 assert y == 61
 
 cells = Cells(7803, 300)
-x, y = sample.find_most_power()
+x, y = cells.find_most_power()
 print('most power at ({x}, {y})'.format(x=x, y=y))

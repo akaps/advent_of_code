@@ -44,12 +44,19 @@ class Tree:
         return self.value_inner(self.root)
 
     def value_inner(self, curr):
+        print('children at node: {children}'.format(children=curr.children))
+        print('metadata at node: {meta}'.format(meta=curr.metadata))
         if not curr.len_children:
+            print('leaf, sum is {sum}'.format(sum=sum(curr.metadata)))
             return sum(curr.metadata)
         total = 0
         for index in curr.metadata:
+            print(index)
             if index < curr.len_children:
                 total += self.value_inner(curr.children[index])
+                print('total is now {total}'.format(total=total))
+            else:
+                print('index oob: {index}'.format(index=index))
         return total
 
     def __repr__(self):

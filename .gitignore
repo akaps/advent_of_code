@@ -1,3 +1,4 @@
 .vscode
 *.pyc
 Pipfile*
+.DS_Store

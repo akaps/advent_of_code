@@ -37,6 +37,5 @@ print('reduced polymer is {size} units long'.format(size=len(res.reduce_given_ch
 letters = [] #letter : size
 for letter in 'abcdefghijklmnopqrstuvwxyz':
     chain_size = res.remove_and_reduce(letter)
-    print('polymer is {size}'.format(size=chain_size))
     letters.append(chain_size)
 print('minimum chain size is {size}'.format(size=min(letters)))

@@ -31,6 +31,9 @@ class Cells:
                 total += self.cells[x + i][y + j]
         return total
 
+    def most_power_square(self):
+        return -1, -1, -1
+
 def calculate(x, y, serial):
     return ((y * (x+10) + serial) * (x+10) // 100 % 10) - 5
 
@@ -47,11 +50,21 @@ sample = Cells(18, 300)
 x, y = sample.find_most_power()
 assert x == 33
 assert y == 45
+x, y, size = sample.most_power_square()
+assert x == 90
+assert y == 269
+assert size == 16
 sample = Cells(42, 300)
 x, y = sample.find_most_power()
 assert x == 21
 assert y == 61
+x, y, size = sample.most_power_square()
+assert x == 232
+assert y == 251
+assert size == 12
 
 cells = Cells(7803, 300)
 x, y = cells.find_most_power()
-print('most power at ({x}, {y})'.format(x=x, y=y))
+print('most 3x3 power at ({x},{y})'.format(x=x, y=y))
+x, y , size = cells.most_power_square()
+print('most power at square ({x},{y},{size})'.format(x=x, y=y, size=size))

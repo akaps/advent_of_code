@@ -32,7 +32,7 @@ class Cells:
         return total
 
 def calculate(x, y, serial):
-    return ((y * (x+10) + serial) * (x+10) // 100 % 10) -5
+    return ((y * (x+10) + serial) * (x+10) // 100 % 10) - 5
 
 def true_coord(x, y):
     return x-1, y-1

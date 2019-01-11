@@ -8,10 +8,16 @@ class TreeNode:
         self.children = []
         self.metadata = []
 
+    def __repr__(self):
+        res = '' + str(self.metadata) + '\n'
+        for child in self.children:
+            res += str(child) + '\n'
+        return res.strip()
+
 class Tree:
-    def __init__(self, input):
+    def __init__(self, inline):
         #sys.setrecursionlimit(8000)
-        self.input = input
+        self.input = deque([(int)(x) for x in inline])
         self.root = TreeNode(self.input.popleft(), self.input.popleft())
         self.build(self.root)
 
@@ -21,7 +27,7 @@ class Tree:
             curr.children.append(child)
             self.build(child)
         for metadata in range(0, curr.len_metadata):
-            curr.metadata.append(input.popleft())
+            curr.metadata.append(self.input.popleft())
 
     def sum_meta_data(self):
         return self.sum_meta_data_inner(self.root)
@@ -38,32 +44,32 @@ class Tree:
         return self.value_inner(self.root)
 
     def value_inner(self, curr):
-        print('node has {num} children'.format(num=curr.len_children))
         if not curr.len_children:
-            print('value is {total}'.format(total=sum(curr.metadata)))
             return sum(curr.metadata)
         total = 0
-        print(curr.metadata)
         for index in curr.metadata:
-            print('check {index}, {len}'.format(index=index, len=curr.len_children))
             if index < curr.len_children:
-                val = self.value_inner(curr.children[index])
-                print('child value is {val}'.format(val=val))
-                total += val
-            else:
-                print('OOB index {index}. value is 0'.format(index=index))
-                total += 0
+                total += self.value_inner(curr.children[index])
         return total
+
+    def __repr__(self):
+        return str(self.root)
 
 def make_tree(input):
     root = Tree(input[0], [input[1]])
     if input:
         root = make_tree(input)
 
-sys.setrecursionlimit(2000)
 file = open('day_8_sample.txt', 'r')
 input = file.readline().strip().split()
-input = deque([(int)(x) for x in input])
+file.close()
+tree = Tree(input)
+
+assert 138 == tree.sum_meta_data()
+assert 10 == tree.value()
+
+file = open('day_8_input.txt', 'r')
+input = file.readline().strip().split()
 file.close()
 tree = Tree(input)
 print('Metadata sum is {sum}'.format(sum=tree.sum_meta_data()))

@@ -60,6 +60,7 @@ class Constellations:
             curr = self.ranges.x * self.ranges.y
         self.update(-1)
         self.show()
+        print(i)
 
     def get_bounds(self):
         xs = (self.x_min(), self.x_max())

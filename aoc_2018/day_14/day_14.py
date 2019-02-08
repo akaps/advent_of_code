@@ -33,19 +33,13 @@ class Recipes:
 recipes = Recipes()
 #print(recipes)
 recipes.run(9)
-print('easy example')
-print(recipes.next_ten(9))
 assert recipes.next_ten(9) == '5158916779'
-print(recipes.next_ten(5))
 assert recipes.next_ten(5) == '0124515891'
 #big sample
-print('big example')
 recipes.run(2018)
-print(recipes.next_ten(18))
 assert recipes.next_ten(18) == '9251071085'
-print(recipes.next_ten(2018))
 assert recipes.next_ten(2018) == '5941429882'
 #input
-print('answer')
+print('part 1')
 recipes.run(409551)
 print(recipes.next_ten(409551))

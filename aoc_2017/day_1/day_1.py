@@ -7,7 +7,6 @@ def reverse_captcha(input, distance):
     return digits
 
 def total(digits):
-    print(digits)
     sum = 0
     for i in range(len(digits)):
         sum += i * digits[i]

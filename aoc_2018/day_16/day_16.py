@@ -89,7 +89,6 @@ def possibilities(op_code, reg_bef, reg_aft):
     for op_name in op_names:
         if is_op(op_name, op_code, reg_bef, reg_aft):
             matches += 1
-    print(matches)
     return matches
 
 op_names = [addr,

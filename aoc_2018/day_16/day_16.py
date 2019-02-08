@@ -2,14 +2,6 @@ from operator import methodcaller
 
 def is_op(op_name, opcode, reg_bef, reg_aft):
     check = op_name(opcode, reg_bef)
-    print('op: {op}\ncode:{code}\nbef:{bef}\nexp: {exp}\nact: {act}\nresult: {res}'.format(
-        op=op_name,
-        code=opcode,
-        bef=reg_bef,
-        exp=check,
-        act=reg_aft,
-        res=check==reg_aft
-    ))
     return check == reg_aft
 
 def addr(opcode, reg):
@@ -126,5 +118,4 @@ def find_triples(ops):
 sample_code = [9, 2, 1, 2]
 sample_reg_bef = [3, 2, 1, 1]
 sample_reg_aft = [3, 2, 2, 1]
-print(possibilities(sample_code, sample_reg_bef, sample_reg_aft))
 assert 3 == possibilities(sample_code, sample_reg_bef, sample_reg_aft)

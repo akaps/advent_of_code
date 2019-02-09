@@ -16,7 +16,7 @@ class Dependencies:
             self.dependencies[step].append(depends_on)
 
     def order(self):
-        res =''
+        res = ''
         while self.dependencies:
             steps = list(self.dependencies.keys())
             steps.sort()
@@ -58,22 +58,32 @@ class Dependencies:
             total_time += time_left
             print(total_time)
             print(order)
-        return total_time
+        return order, total_time
 
 def time_for_step(step, time_bonus):
-    return ord(step)-ord('A')+time_bonus
+    return ord(step) - ord('A') + time_bonus
 
-file = open('input.txt')
-instr = file.readlines()
-file.close()
-dep = Dependencies()
+def solve_for(file_name, step_size):
+    file = open(file_name)
+    instr = file.readlines()
+    file.close()
+    dep = Dependencies()
 
-#part 1
-dep.parse_input(instr)
-order = dep.order()
-print('single-threaded sequence is {order}'.format(order=order))
+    #part 1
+    dep.parse_input(instr)
+    order = dep.order()
 
-#part 2
-dep.parse_input(instr)
-time = dep.order_in_parallel(2, 0)
-print('multi-threaded time was {time}'.format(time=time))
+    #part 2
+    dep.parse_input(instr)
+    order_parallel, time_parallel = dep.order_in_parallel(2, step_size)
+
+    return order, order_parallel, time_parallel
+
+ORDER, ORDER_PARALLEL, TIME = solve_for('sample.txt', 0)
+assert ORDER == 'CABDFE'
+assert ORDER_PARALLEL == 'CABFDE'
+assert TIME == 15
+
+ORDER, ORDER_PARALLEL, TIME = solve_for('input.txt', 60)
+print('single-threaded sequence is {order}'.format(order=ORDER))
+print('multi-threaded time was {time}'.format(time=TIME))

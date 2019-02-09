@@ -1,10 +1,13 @@
 import re
 
 class Dependencies:
-    def __init__(self):
-        self.dependencies = {}
+    def __init__(self, file_name):
+        file = open(file_name)
+        self.parse_input(file.readlines())
+        file.close()
 
     def parse_input(self, instructions):
+        self.dependencies = {}
         regex = 'Step | must be finished before step | can begin.'
         for instruction in instructions:
             instruction = re.split(regex, instruction.strip())
@@ -16,66 +19,68 @@ class Dependencies:
             self.dependencies[step].append(depends_on)
 
     def order(self):
-        res = ''
-        while self.dependencies:
-            steps = list(self.dependencies.keys())
-            steps.sort()
-
-            for step in steps:
-                if not self.dependencies[step]:
-                    res += step
-                    self.satisfy_dependencies(step)
-                    break
-        return res
-
-    def satisfy_dependencies(self, step):
-        self.dependencies.pop(step)
-        for step_2 in self.dependencies:
-            if step in self.dependencies[step_2]:
-                self.dependencies[step_2].remove(step)
-
-
-    def order_in_parallel(self, max_workers, time_bonus):
-        total_time = 0
-        processing = {}
         order = ''
-        while self.dependencies:
-            steps = list(self.dependencies.keys())
+        to_process = dict(self.dependencies)
+        while to_process:
+            steps = list(to_process.keys())
             steps.sort()
-            #fill pipelines
             for step in steps:
-                if not self.dependencies[step] and len(processing) < max_workers:
-                    print(step)
-                    processing[step] = time_for_step(step, time_bonus)
-                    print(self.dependencies)
-            print(processing)
-            #decrease time in pipelines & increase time in total
-            to_remove = min(processing, key=processing.get)
-            order += to_remove
-            time_left = processing.pop(to_remove, None)
-            processing = {k: v - time_left for k, v in processing.items()}
-            self.satisfy_dependencies(to_remove)
-            total_time += time_left
-            print(total_time)
-            print(order)
-        return order, total_time
+                if not to_process[step]:
+                    order += step
+                    self.satisfy_dependencies(step, to_process)
+                    break
+        return order
+
+    def satisfy_dependencies(self, to_remove, dependencies):
+        dependencies.pop(to_remove)
+        for step in dependencies:
+            if to_remove in dependencies[step]:
+                dependencies[step].remove(to_remove)
+
+
+    def order_in_parallel(self, time_bonus):
+        processing_1 = None
+        processing_2 = None
+        order = ''
+        to_process = dict(self.dependencies)
+        time = 0
+        print('Second\tWorker 1\tWorker 2\tDone')
+        while to_process:
+            steps = list(to_process.keys())
+            steps.sort()
+            if not processing_1 or not processing_2:
+                for step in steps:
+                    if not to_process[step]:
+                        if not processing_1:
+                            processing_1 = [step, time_for_step(step, time_bonus)]
+                            to_process.pop(step)
+                        elif not processing_2:
+                            to_process.pop(step)
+                            processing_2 = [step, time_for_step(step, time_bonus)]
+            if processing_1: 
+                processing_1[1] -= 1
+            if processing_2: 
+                processing_2[1] -= 1
+            print('{sec}\t{t1}\t\t{t2}\t\t{done}'.format(
+                sec=time,
+                t1=processing_1[0] if processing_1 else '-',
+                t2=processing_2[0] if processing_2 else '-',
+                done=order))
+            if processing_1 and processing_1[1] <= 0:
+                order += processing_1[0]
+                processing_1 = None
+            if processing_2 and processing_2[1] <=0:
+                order += processing_2[0]
+                processing_2 = None
+        return order, time
 
 def time_for_step(step, time_bonus):
     return ord(step) - ord('A') + time_bonus
 
 def solve_for(file_name, step_size):
-    file = open(file_name)
-    instr = file.readlines()
-    file.close()
-    dep = Dependencies()
-
-    #part 1
-    dep.parse_input(instr)
+    dep = Dependencies(file_name)
     order = dep.order()
-
-    #part 2
-    dep.parse_input(instr)
-    order_parallel, time_parallel = dep.order_in_parallel(2, step_size)
+    order_parallel, time_parallel = dep.order_in_parallel(step_size)
 
     return order, order_parallel, time_parallel
 

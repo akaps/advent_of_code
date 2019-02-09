@@ -52,34 +52,50 @@ class Cells:
                 self.cell_sums[x - 1][y] if x - 1 >= 0 else 0 -
                 self.cell_sums[x - 1][y - 1] if x - 1 >=0 and y - 1 >= 0 else 0)
 
+    def power_square(self, x, y, size):
+        total = 0
+        x -= 1
+        y -= 1
+        for i in range(x, x+size):
+            for j in range(y, y+size):
+                total += self.cells[i][j]
+        return total
+
+
 def calculate(x, y, serial):
     return ((y * (x + 10) + serial) * (x + 10) // 100 % 10) - 5
 
 assert calculate(3, 5, 8) == 4
-sample = Cells(8, 5)
-assert sample.cells[2][4] == 4
 assert calculate(122, 79, 57) == -5
 assert calculate(217, 196, 39) == 0
 assert calculate(101, 153, 71) == 4
-sample = Cells(18, 300)
-x, y = sample.find_most_power()
-assert x == 33
-assert y == 45
-x, y, size = sample.most_power_square()
-assert x == 90
-assert y == 269
-assert size == 16
-sample = Cells(42, 300)
-x, y = sample.find_most_power()
-assert x == 21
-assert y == 61
-x, y, size = sample.most_power_square()
-assert x == 232
-assert y == 251
-assert size == 12
 
-cells = Cells(7803, 300)
-x, y = cells.find_most_power()
-print('most 3x3 power at ({x},{y})'.format(x=x, y=y))
-x, y , size = cells.most_power_square()
-print('most power at square ({x},{y},{size})'.format(x=x, y=y, size=size))
+GRID_18 = Cells(18, 300)
+X, Y = GRID_18.find_most_power()
+assert X == 33
+assert Y == 45
+assert GRID_18.power_square(33, 45, 3) == 29
+
+GRID_42 = Cells(42, 300)
+X, Y = GRID_42.find_most_power()
+assert X == 21
+assert Y == 61
+assert GRID_42.power_square(21, 61, 3) == 30
+
+X, Y, SIZE = GRID_18.most_power_square()
+assert GRID_18.power_square(90, 269, 16) == 113
+assert X == 90
+assert Y == 269
+assert SIZE == 16
+
+X, Y, SIZE = GRID_42.most_power_square()
+assert GRID_42.power_square(232, 251, 12) == 119
+assert X == 232
+assert Y == 251
+assert SIZE == 12
+
+CELLS = Cells(7803, 300)
+X, Y = CELLS.find_most_power()
+print('most 3x3 power at ({x},{y})'.format(x=X, y=Y))
+X, Y, SIZE = CELLS.most_power_square()
+print('most power at square ({x},{y},{size})'.format(x=X, y=Y, size=SIZE))

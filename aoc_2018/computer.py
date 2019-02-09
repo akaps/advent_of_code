@@ -20,7 +20,14 @@ class Computer:
     def do_instruction(self, ip):
         command = self.instructions[ip]
         cmd = getattr(self, command[0])
-        self.registers = cmd(command, self.registers)
+        res = cmd(command, self.registers)
+        # print('ip={ip} {reg} {cmd} {after}'.format(
+        #     ip=ip,
+        #     reg=self.registers,
+        #     cmd=command,
+        #     after=res
+        # ))
+        self.registers = res
 
     @staticmethod
     def addr(command, reg):

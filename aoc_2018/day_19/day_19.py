@@ -23,7 +23,7 @@ def process_input(file_name):
     return computer.registers[0]
 
 answer = process_input('day_19_sample.txt')
-assert answer == 6
+assert answer == 7
 
 answer = process_input('day_19_input.txt')
 print('Part 1 answer: {ans}'.format(ans=answer))

@@ -30,15 +30,15 @@ class Tree:
         for _ in range(0, curr.len_metadata):
             curr.metadata.append(data.popleft())
 
-    def sum_meta_data(self):
-        return self.sum_meta_data_inner(self.root)
+    def metadata_sum(self):
+        return self.metadata_sum_inner(self.root)
 
-    def sum_meta_data_inner(self, curr):
+    def metadata_sum_inner(self, curr):
         if not curr:
             return 0
         total = 0
         for child in curr.children:
-            total += self.sum_meta_data_inner(child)
+            total += self.metadata_sum_inner(child)
         return total + sum(curr.metadata)
 
     def value(self):
@@ -57,11 +57,11 @@ class Tree:
         return str(self.root)
 
 TREE = Tree('sample.txt')
-assert TREE.sum_meta_data() == 138
+assert TREE.metadata_sum() == 138
 assert TREE.value() == 66
 
 TREE = Tree('input.txt')
-metdata_sum = TREE.sum_meta_data()
+metdata_sum = TREE.metadata_sum()
 assert metdata_sum == 40309
 print('Metadata sum is {sum}'.format(sum=metdata_sum))
 print('Value of root is {value}'.format(value=TREE.value()))

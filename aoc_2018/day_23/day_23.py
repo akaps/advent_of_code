@@ -1,4 +1,5 @@
 import re
+import aoc_2018.utils as utils
 
 class Nanobots:
     def __init__(self, lines):
@@ -15,16 +16,10 @@ class Nanobots:
     def within_cluster(self):
         total = 0
         for nanobot in self.nanobots:
-            dist = manhattan_distance(nanobot, self.center)
+            dist = utils.manhattan_distance(nanobot, self.center)
             if dist <= self.radius:
                 total += 1
         return total
-
-def manhattan_distance(loc1, loc2):
-    dist = 0
-    for dim in enumerate(loc1):
-        dist += abs(dim[1]-loc2[dim[0]])
-    return dist
 
 def determine_cluster(file_name):
     file = open(file_name, 'r')

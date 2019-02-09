@@ -1,4 +1,5 @@
 import re
+import aoc_2018.utils as utils
 
 class Coordinates:
 
@@ -33,7 +34,7 @@ class Coordinates:
             for y in range(self.y_min, self.y_max):
                 dist = {}
                 for coordinate in self.coordinates:
-                    dist[coordinate] = manhattan_distance(coordinate, (x, y))
+                    dist[coordinate] = utils.manhattan_distance(coordinate, (x, y))
                 closest = min(dist, key=lambda key: dist[key])
                 if self.bounded(closest):
                     res.update({closest: res[closest] + 1})
@@ -46,14 +47,11 @@ class Coordinates:
             for y in range(self.y_min, self.y_max):
                 dist = []
                 for coordinate in self.coordinates:
-                    dist.append(manhattan_distance(coordinate, (x,y )))
+                    dist.append(utils.manhattan_distance(coordinate, (x,y )))
                 total_dist = sum(dist)
                 if total_dist < 10000:
                     total += 1
         return total
-
-def manhattan_distance(origin, dest):
-    return abs(origin[0] - dest[0]) + abs(origin[1] - dest[1])
 
 file = open('day_6_input.txt')
 origins = file.readlines()

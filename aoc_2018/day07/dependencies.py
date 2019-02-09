@@ -1,4 +1,5 @@
 import re
+import copy
 
 class Dependencies:
     def __init__(self, file_name):
@@ -20,7 +21,7 @@ class Dependencies:
 
     def order(self):
         order = ''
-        to_process = dict(self.dependencies)
+        to_process = copy.deepcopy(self.dependencies)
         while to_process:
             steps = list(to_process.keys())
             steps.sort()
@@ -39,43 +40,51 @@ class Dependencies:
 
 
     def order_in_parallel(self, time_bonus):
-        processing_1 = None
-        processing_2 = None
+        processing = [[None, 0], [None, 0]]
         order = ''
-        to_process = dict(self.dependencies)
+        to_process = copy.deepcopy(self.dependencies)
         time = 0
         print('Second\tWorker 1\tWorker 2\tDone')
-        while to_process:
+        while to_process or (processing[0][0] or processing[1][0]):
             steps = list(to_process.keys())
             steps.sort()
-            if not processing_1 or not processing_2:
+            if not processing[0][0] or not processing[1][1]:
                 for step in steps:
                     if not to_process[step]:
-                        if not processing_1:
-                            processing_1 = [step, time_for_step(step, time_bonus)]
+                        if not processing[0][0]:
+                            processing[0] = [step, time_for_step(step, time_bonus)]
                             to_process.pop(step)
-                        elif not processing_2:
+                        elif not processing[1][0]:
+                            processing[1] = [step, time_for_step(step, time_bonus)]
                             to_process.pop(step)
-                            processing_2 = [step, time_for_step(step, time_bonus)]
-            if processing_1: 
-                processing_1[1] -= 1
-            if processing_2: 
-                processing_2[1] -= 1
+            if processing[0][0]:
+                processing[0][1] -= 1
+            if processing[1][0]:
+                processing[1][1] -= 1
             print('{sec}\t{t1}\t\t{t2}\t\t{done}'.format(
                 sec=time,
-                t1=processing_1[0] if processing_1 else '-',
-                t2=processing_2[0] if processing_2 else '-',
+                t1=processing[0][0] if processing[0][0] else '-',
+                t2=processing[1][0] if processing[1][0] else '-',
                 done=order))
-            if processing_1 and processing_1[1] <= 0:
-                order += processing_1[0]
-                processing_1 = None
-            if processing_2 and processing_2[1] <=0:
-                order += processing_2[0]
-                processing_2 = None
+            if processing[0][0] and processing[0][1] <= 0:
+                to_remove = processing[0][0]
+                order += to_remove
+                processing[0][0] = None
+                for step in to_process:
+                    if to_remove in to_process[step]:
+                        to_process[step].remove(to_remove)
+            if processing[1][0] and processing[1][1] <= 0:
+                to_remove = processing[1][0]
+                order += to_remove
+                processing[1][0] = None
+                for step in to_process:
+                    if to_remove in to_process[step]:
+                        to_process[step].remove(to_remove)
+            time += 1
         return order, time
 
 def time_for_step(step, time_bonus):
-    return ord(step) - ord('A') + time_bonus
+    return ord(step) - ord('A') + 1 + time_bonus
 
 def solve_for(file_name, step_size):
     dep = Dependencies(file_name)
@@ -89,6 +98,6 @@ assert ORDER == 'CABDFE'
 assert ORDER_PARALLEL == 'CABFDE'
 assert TIME == 15
 
-ORDER, ORDER_PARALLEL, TIME = solve_for('input.txt', 60)
-print('single-threaded sequence is {order}'.format(order=ORDER))
-print('multi-threaded time was {time}'.format(time=TIME))
+# ORDER, ORDER_PARALLEL, TIME = solve_for('input.txt', 60)
+# print('single-threaded sequence is {order}'.format(order=ORDER))
+# print('multi-threaded time was {time}'.format(time=TIME))

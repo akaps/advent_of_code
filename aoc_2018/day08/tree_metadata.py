@@ -45,19 +45,12 @@ class Tree:
         return self.value_inner(self.root)
 
     def value_inner(self, curr):
-        print('children at node: {children}'.format(children=curr.children))
-        print('metadata at node: {meta}'.format(meta=curr.metadata))
-        if not curr.len_children:
-            print('leaf, sum is {sum}'.format(sum=sum(curr.metadata)))
+        if curr.len_children == 0:
             return sum(curr.metadata)
         total = 0
         for index in curr.metadata:
-            print(index)
-            if index < curr.len_children:
-                total += self.value_inner(curr.children[index])
-                print('total is now {total}'.format(total=total))
-            else:
-                print('index oob: {index}'.format(index=index))
+            if index - 1 < curr.len_children:
+                total += self.value_inner(curr.children[index - 1])
         return total
 
     def __repr__(self):
@@ -68,5 +61,7 @@ assert TREE.sum_meta_data() == 138
 assert TREE.value() == 66
 
 TREE = Tree('input.txt')
-print('Metadata sum is {sum}'.format(sum=TREE.sum_meta_data()))
+metdata_sum = TREE.sum_meta_data()
+assert metdata_sum == 40309
+print('Metadata sum is {sum}'.format(sum=metdata_sum))
 print('Value of root is {value}'.format(value=TREE.value()))

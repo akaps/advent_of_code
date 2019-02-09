@@ -32,11 +32,11 @@ class Dependencies:
                     break
         return order
 
-    def satisfy_dependencies(self, to_remove, dependencies):
-        dependencies.pop(to_remove)
-        for step in dependencies:
-            if to_remove in dependencies[step]:
-                dependencies[step].remove(to_remove)
+    def satisfy_dependencies(self, to_remove, to_process):
+        to_process.pop(to_remove)
+        for step in to_process:
+            if to_remove in to_process[step]:
+                to_process[step].remove(to_remove)
 
 
     def order_in_parallel(self, num_processors, time_bonus):
@@ -44,7 +44,7 @@ class Dependencies:
         order = ''
         to_process = copy.deepcopy(self.dependencies)
         time = 0
-        pretty_print_header(num_processors)
+        pretty_print_header()
         while to_process or processing:
             steps = list(to_process.keys())
             steps.sort()
@@ -65,25 +65,23 @@ def complete_processors(processing, to_process, order):
     return order
 
 def update_time(processing):
-    smallest = min(processing, key=processing.get)
-    time = processing[smallest]
-    print('smallest time {t} for {item}'.format(t=time, item=smallest))
+    # smallest = min(processing, key=processing.get)
+    # time = processing[smallest]
+    # print('smallest time {t} for {item}'.format(t=time, item=smallest))
     time_update = processing[min(processing, key=processing.get)]
     for item in processing.items():
         processing.update({item[0]: item[1] - time_update})
     return time_update
 
 def populate_processors(processing, num_processors, steps, to_process, time_bonus):
-    if len(processing) < num_processors:
-        for step in steps:
-            if not to_process[step]:
-                processing[step] = time_for_step(step, time_bonus)
-                to_process.pop(step)
+    for step in steps:
+        if not to_process[step] and len(processing) < num_processors:
+            processing[step] = time_for_step(step, time_bonus)
+            to_process.pop(step)
 
-def pretty_print_header(num_processors):
-    result = ['Second']
-    for i in range(num_processors):
-        result.append('Worker {i}'.format(i=i))
+def pretty_print_header():
+    result = ['Time']
+    result.append('Workers\t\t')
     result.append('Done')
     print('\t'.join(result))
 
@@ -96,7 +94,7 @@ def pretty_print_line(time, processing, num_processors, order):
         else:
             result.append('-')
     result.append(order)
-    print('\t\t'.join(result))
+    print('\t'.join(result))
 
 def time_for_step(step, time_bonus):
     return ord(step) - ord('A') + 1 + time_bonus

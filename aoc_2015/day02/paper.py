@@ -4,9 +4,14 @@ file = open('input.txt')
 lines = file.readlines()
 file.close()
 
-total = 0
+total_paper = 0
+total_ribbon = 0
 for line in lines:
-    l,w,h = map(int, re.findall('\d+', line))
-    sides = (l*w, w*h, h*l)
-    total += 2 * sum(sides) + min(sides)
-print(total)
+    dims = list(map(int, re.findall('\d+', line)))
+    dims.sort()
+    sides = (dims[0] * dims[1], dims[1] * dims[2], dims[2] * dims[0])
+    total_paper += 2 * sum(sides) + min(sides)
+    #2*smallest+2*not largest+lwh
+    total_ribbon += 2 * (dims[0] + dims[1]) + (dims[0] * dims[1] * dims[2])
+print('total paper needed = {ans}'.format(ans=total_paper))
+print('total ribbon needed = {ans}'.format(ans=total_ribbon))

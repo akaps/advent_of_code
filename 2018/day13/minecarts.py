@@ -1,5 +1,3 @@
-import copy
-
 UP = '^'
 DOWN = 'v'
 LEFT = '<'
@@ -8,7 +6,7 @@ CARTS = ''.join([UP, RIGHT, DOWN, LEFT])
 HORIZONTAL = '-'
 VERTICAL = '|'
 JUNCTION = '+'
-CURVES = '\/'
+CURVES = '/\\'
 STRAIGHT = ''
 
 class Point:
@@ -98,21 +96,54 @@ class Minecarts:
             cart.move()
             new_loc = cart.location
             if self.track[new_loc.x][new_loc.y] in CURVES:
-                print('uh-oh, haven\'t figure this out!')
+                cart.turn(take_curve(cart.direction, self.track[new_loc.x][new_loc.y]))
             elif self.track[new_loc.x][new_loc.y] == JUNCTION:
-                print('did not start this either!')
+                cart.turn(get_junction_turn(cart.direction, cart.junction_behavior))
+                cart.update_junction_behavior()
 
     def check_for_crashes(self):
         for cart in self.carts:
             for other_cart in [c for c in self.carts if c != cart]:
                 if cart.location == other_cart.location:
                     print('BANG!')
-                    self.crash = cart.location
+                    #Hack, implementation uses x as row and y as column
+                    #This is reverse of the problem spec
+                    self.crash = Point(cart.location.y, cart.location.x)
                     return
+
+
+def take_curve(direction, curve):
+    if direction == RIGHT:
+        if curve == '/':
+            return UP
+        return DOWN
+    if direction == LEFT:
+        if curve == '/':
+            return DOWN
+        return UP
+    if direction == DOWN:
+        if curve == '/':
+            return LEFT
+        return RIGHT
+    if direction == UP:
+        if curve == '/':
+            return RIGHT
+        return LEFT
+    print('Unsupported curve/direction pair! {dir}, {curve}'.format(
+        dir=direction, curve=curve))
+    return '?'
+
+def get_junction_turn(direction, junction):
+    pos = CARTS.index(direction)
+    if junction == LEFT:
+        return CARTS[(pos + 3) % 4]
+    if junction == RIGHT:
+        return CARTS[(pos +1) % 4]
+    return direction
 
 LINE = Minecarts('line.txt')
 LINE.run()
-assert LINE.crash == Point(3, 0)
+assert LINE.crash == Point(0, 3)
 
 SAMPLE = Minecarts('sample.txt')
 SAMPLE.run()

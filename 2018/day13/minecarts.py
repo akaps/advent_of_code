@@ -1,61 +1,44 @@
-UP = '^'
-DOWN = 'v'
-LEFT = '<'
-RIGHT = '>'
-CARTS = ''.join([UP, RIGHT, DOWN, LEFT])
+NORTH = '^'
+SOUTH = 'v'
+WEST = '<'
+EAST = '>'
+DIRECTIONS = ''.join([NORTH, EAST, SOUTH, WEST])
 HORIZONTAL = '-'
 VERTICAL = '|'
 JUNCTION = '+'
 CURVES = '/\\'
-STRAIGHT = ''
+LEFT = -1j
+RIGHT = 1j
+STRAIGHT = 1
+TURNS = (LEFT, STRAIGHT, RIGHT)
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def translate(self, point):
-        self.x += point.x
-        self.y += point.y
-
-    def __repr__(self):
-        return '({x}, {y})'.format(x=self.x, y=self.y)
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.x == other.x and self.y == other.y
-        else:
-            return False
-
-def get_mods(dir):
-    dirs = {
-        UP: Point(-1, 0),
-        DOWN: Point(1, 0),
-        LEFT: Point(0, -1),
-        RIGHT: Point(0, 1),
+def direction(char):
+    switcher = {
+        NORTH : -1j,
+        SOUTH : 1j,
+        EAST : 1,
+        WEST : -1
     }
-    return dirs.get(dir, 'Invalid direction {dir}'.format(dir=dir))
+    return switcher.get(char)
 
-#implementing carts as a vector
+#implementing carts as a complex vector
+#y is flipped, so -j is up, and j is down
 class Cart:
-    def __init__(self, location, direction):
+    def __init__(self, location, heading):
+        assert heading != 0j
         self.location = location
-        self.direction = direction
-        self.junction_behavior = LEFT
-
-    def turn(self, new_direction):
-        self.direction = new_direction
+        self.direction = heading
+        self.next_turn = 0
 
     def move(self):
-        self.location.translate(get_mods(self.direction))
+        self.location += self.direction
 
-    def update_junction_behavior(self):
-        if self.junction_behavior == LEFT:
-            self.junction_behavior = STRAIGHT
-        elif self.junction_behavior == STRAIGHT:
-            self.junction_behavior = RIGHT
-        else:
-            self.junction_behavior = LEFT
+    def turn(self, rotation):
+        assert rotation != 0j
+        self.direction *= rotation
+
+    def update_turn_behavior(self):
+        self.next_turn = (self.next_turn + 1) % 3
 
     def __repr__(self):
         return 'Cart at {p} going {dir}'.format(p=self.location, dir=self.direction)
@@ -75,14 +58,14 @@ class Minecarts:
             to_process = list(line_enum[1])
             for char_enum in enumerate(to_process):
                 char = char_enum[1]
-                if char in CARTS:
+                if char in DIRECTIONS:
                     #make a cart
-                    point = Point(line_enum[0], char_enum[0])
-                    self.carts.append(Cart(point, char_enum[1]))
+                    point = (line_enum[0] * 1j + char_enum[0])
+                    self.carts.append(Cart(point, direction(char)))
                     #replace the track with the proper representation
-                    if line_enum[1] == LEFT or line_enum[1] == RIGHT:
+                    if char in (EAST, WEST):
                         to_process[char_enum[0]] = HORIZONTAL
-                    elif line_enum[1] == DOWN or line_enum[1] == UP:
+                    elif char in (SOUTH, NORTH):
                         to_process[char_enum[0]] = VERTICAL
             self.track.append(to_process)
 
@@ -93,13 +76,26 @@ class Minecarts:
 
     def move_carts(self):
         for cart in self.carts:
+            self.validate_cart(cart)
             cart.move()
             new_loc = cart.location
-            if self.track[new_loc.x][new_loc.y] in CURVES:
-                cart.turn(take_curve(cart.direction, self.track[new_loc.x][new_loc.y]))
-            elif self.track[new_loc.x][new_loc.y] == JUNCTION:
-                cart.turn(get_junction_turn(cart.direction, cart.junction_behavior))
-                cart.update_junction_behavior()
+            track = self.track[int(new_loc.imag)][int(new_loc.real)]
+            if track in CURVES:
+                print('turn for {cart}'.format(cart=cart))
+                cart.turn(take_curve(cart.direction, track))
+                print('Cart is now {cart}'.format(cart=cart))
+            elif track == JUNCTION:
+                print('junction for {cart}'.format(cart=cart))
+                cart.turn(TURNS[cart.next_turn])
+                cart.update_turn_behavior()
+                print('Cart is now {cart}'.format(cart=cart))
+
+    def validate_cart(self, cart):
+        track_piece = self.track[int(cart.location.imag)][int(cart.location.real)]
+        if cart.direction in (EAST, EAST):
+            assert track_piece in (HORIZONTAL, JUNCTION) or track_piece in CURVES
+        elif cart.direction in (NORTH, SOUTH):
+            assert track_piece in (VERTICAL, JUNCTION) or track_piece in CURVES
 
     def check_for_crashes(self):
         for cart in self.carts:
@@ -108,46 +104,26 @@ class Minecarts:
                     print('BANG!')
                     #Hack, implementation uses x as row and y as column
                     #This is reverse of the problem spec
-                    self.crash = Point(cart.location.y, cart.location.x)
+                    self.crash = int(cart.location.real), int(cart.location.imag)
                     return
 
 
-def take_curve(direction, curve):
-    if direction == RIGHT:
-        if curve == '/':
-            return UP
-        return DOWN
-    if direction == LEFT:
-        if curve == '/':
-            return DOWN
-        return UP
-    if direction == DOWN:
-        if curve == '/':
+def take_curve(heading, curve):
+    if curve == '\\':
+        if heading.real == 0: #N/S heading
             return LEFT
         return RIGHT
-    if direction == UP:
-        if curve == '/':
-            return RIGHT
-        return LEFT
-    print('Unsupported curve/direction pair! {dir}, {curve}'.format(
-        dir=direction, curve=curve))
-    return '?'
-
-def get_junction_turn(direction, junction):
-    pos = CARTS.index(direction)
-    if junction == LEFT:
-        return CARTS[(pos + 3) % 4]
-    if junction == RIGHT:
-        return CARTS[(pos +1) % 4]
-    return direction
+    if heading.real == 0:
+        return RIGHT
+    return LEFT
 
 LINE = Minecarts('line.txt')
 LINE.run()
-assert LINE.crash == Point(0, 3)
+assert LINE.crash == (0, 3)
 
 SAMPLE = Minecarts('sample.txt')
 SAMPLE.run()
-assert SAMPLE.crash == Point(7, 3)
+assert SAMPLE.crash == (7, 3)
 
 PROBLEM = Minecarts('input.txt')
 PROBLEM.run()

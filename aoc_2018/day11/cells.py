@@ -34,13 +34,12 @@ class Cells:
                 total += self.cells[row + i][col + j]
         return total
 
-    #2D implementation of Kadane's algorithm
     def most_power_square(self):
-        max_sum = -999999999999
+        max_sum = self.cell_sums[0][0]
         max_x = max_y = max_size = -1
         for size in range(1, 300):
-            for row in range(300-size):
-                for col in range(300-size):
+            for row in range(301 - size):
+                for col in range(301 - size):
                     if self.sum_area(row, col, size) > max_sum:
                         max_x = row
                         max_y = col
@@ -48,10 +47,12 @@ class Cells:
         return max_x, max_y, max_size
 
     def sum_area(self, row, col, size):
-        return (self.cell_sums[row][col] -
-                self.cell_sums[row - size][col] -
-                self.cell_sums[row][col - size] +
-                self.cell_sums[row - size][col - size])
+        row -= 1
+        col -= 1
+        return (self.cell_sums[row][col]
+                - self.cell_sums[row - size][col]
+                - self.cell_sums[row][col - size]
+                + self.cell_sums[row - size][col - size])
 
     def summed_area(self, row, col):
         prev_col = col - 1
@@ -65,8 +66,8 @@ class Cells:
         total = 0
         row -= 1
         col -= 1
-        for i in range(row, row+size):
-            for j in range(col, col+size):
+        for i in range(row, row + size):
+            for j in range(col, col + size):
                 total += self.cells[i][j]
         return total
 
@@ -78,32 +79,30 @@ assert calculate(122, 79, 57) == -5
 assert calculate(217, 196, 39) == 0
 assert calculate(101, 153, 71) == 4
 
-GRID__SIZE_3 = Cells(18, 2)
-assert GRID__SIZE_3.cell_sums[0][0] == -2
-assert GRID__SIZE_3.cell_sums[0][1] == -3
-assert GRID__SIZE_3.cell_sums[1][0] == -4
-assert GRID__SIZE_3.cell_sums[1][1] == -5
-
 GRID_18 = Cells(18, 300)
 X, Y = GRID_18.find_most_power()
 assert X == 33
 assert Y == 45
 assert GRID_18.power_square(33, 45, 3) == 29
+assert GRID_18.sum_area(33, 45, 3) == 29
 
 GRID_42 = Cells(42, 300)
 X, Y = GRID_42.find_most_power()
 assert X == 21
 assert Y == 61
 assert GRID_42.power_square(21, 61, 3) == 30
+assert GRID_18.sum_area(21, 61, 3) == 30
 
 X, Y, SIZE = GRID_18.most_power_square()
 assert GRID_18.power_square(90, 269, 16) == 113
+assert GRID_18.sum_area(90, 269, 16) == 113
 assert X == 90
 assert Y == 269
 assert SIZE == 16
 
 X, Y, SIZE = GRID_42.most_power_square()
 assert GRID_42.power_square(232, 251, 12) == 119
+assert GRID_18.sum_area(232, 251, 12) == 119
 assert X == 232
 assert Y == 251
 assert SIZE == 12

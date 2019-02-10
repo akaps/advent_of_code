@@ -25,7 +25,6 @@ class Point:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            print('the same!')
             return self.x == other.x and self.y == other.y
         else:
             return False
@@ -37,7 +36,7 @@ def get_mods(dir):
         LEFT: Point(0, -1),
         RIGHT: Point(0, 1),
     }
-    return dirs.get(dir, "Invalid direction")
+    return dirs.get(dir, 'Invalid direction {dir}'.format(dir=dir))
 
 #implementing carts as a vector
 class Cart:
@@ -81,7 +80,7 @@ class Minecarts:
                 if char in CARTS:
                     #make a cart
                     point = Point(line_enum[0], char_enum[0])
-                    self.carts.append(Cart(point, line_enum[1]))
+                    self.carts.append(Cart(point, char_enum[1]))
                     #replace the track with the proper representation
                     if line_enum[1] == LEFT or line_enum[1] == RIGHT:
                         to_process[char_enum[0]] = HORIZONTAL
@@ -104,11 +103,8 @@ class Minecarts:
                 print('did not start this either!')
 
     def check_for_crashes(self):
-        print('all: {carts}'.format(carts=self.carts))
         for cart in self.carts:
-            print('looking at: {cart}'.format(cart=cart))
             for other_cart in [c for c in self.carts if c != cart]:
-                print('checking against {cart}'.format(cart=other_cart))
                 if cart.location == other_cart.location:
                     print('BANG!')
                     self.crash = cart.location

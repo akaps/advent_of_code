@@ -56,11 +56,10 @@ class Cells:
     def summed_area(self, row, col):
         prev_col = col - 1
         prev_row = row - 1
-        bot_right = self.cells[row][col]
-        bot_left = self.cell_sums[row][prev_col] if col - 1 >= 0 else 0
-        top_right = self.cell_sums[prev_row][col] if row - 1 >= 0 else 0
-        top_left = self.cell_sums[prev_row][prev_col] if row - 1 >= 0 and col - 1 >= 0 else 0
-        return bot_right + bot_left + top_right - top_left
+        return (self.cells[row][col]
+                + (self.cell_sums[row][prev_col] if prev_col >= 0 else 0)
+                + (self.cell_sums[prev_row][col] if prev_row >= 0 else 0)
+                - (self.cell_sums[prev_row][prev_col] if prev_row >= 0 and prev_col >= 0 else 0))
 
     def power_square(self, row, col, size):
         total = 0

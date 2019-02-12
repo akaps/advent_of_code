@@ -92,12 +92,12 @@ class Minecarts:
                 self.turn_cart(cart)
         if self.carts:
             last_cart = self.carts[0]
-            last_cart.move() #end of the first tick it is the only cart left
-            return int(last_cart.location.real), int(last_cart.location.imag)
+            return location(last_cart)
         return None
 
     def turn_cart(self, cart):
-        track = self.track[int(cart.location.imag)][int(cart.location.real)]
+        loc = location(cart)
+        track = self.track[loc[1]][loc[0]]
         if track in CURVES:
             cart.turn(take_curve(cart.direction, track))
         elif track == JUNCTION:
@@ -111,12 +111,15 @@ class Minecarts:
                     loc=cart.location))
                 #Hack, implementation uses x as row and y as column
                 #This is reverse of the problem spec
-                self.crashes.append((int(cart.location.real), int(cart.location.imag)))
+                self.crashes.append(location(cart))
                 self.carts.remove(cart)
                 self.carts.remove(other_cart)
                 print('new number of carts: {size}'.format(
                     size=len(self.carts)))
                 return
+
+def location(last_cart):
+    return int(last_cart.location.real), int(last_cart.location.imag)
 
 def take_curve(heading, curve):
     if curve == '\\':
@@ -137,11 +140,10 @@ assert SAMPLE.crashes[0] == (7, 3)
 
 SAMPLE = Minecarts('sample_pt2.txt')
 LAST_CART = SAMPLE.run()
-print(SAMPLE.crashes)
 assert SAMPLE.crashes[0] == (2, 0)
-assert SAMPLE.crashes[1] == (4, 2)
-assert SAMPLE.crashes[2] == (4, 6)
-assert SAMPLE.crashes[3] == (4, 2)
+assert SAMPLE.crashes[1] == (2, 4)
+assert SAMPLE.crashes[2] == (6, 4)
+assert SAMPLE.crashes[3] == (2, 4)
 assert LAST_CART == (6, 4)
 
 PROBLEM = Minecarts('input.txt')

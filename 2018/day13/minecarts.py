@@ -61,7 +61,7 @@ class Minecarts:
         lines = [x.rstrip() for x in file.readlines()]
         file.close()
         self.generate_track(lines)
-        self.crash = None
+        self.crashes = []
 
     def generate_track(self, lines):
         self.track = []
@@ -84,12 +84,17 @@ class Minecarts:
             self.track.append(to_process)
 
     def run(self):
-        while not self.crash:
+        while len(self.carts) > 1:
             self.carts.sort()
             for cart in self.carts:
                 cart.move()
                 self.check_for_crash(cart)
                 self.turn_cart(cart)
+        if self.carts:
+            last_cart = self.carts[0]
+            last_cart.move() #end of the first tick it is the only cart left
+            return int(last_cart.location.real), int(last_cart.location.imag)
+        return None
 
     def turn_cart(self, cart):
         track = self.track[int(cart.location.imag)][int(cart.location.real)]
@@ -106,7 +111,11 @@ class Minecarts:
                     loc=cart.location))
                 #Hack, implementation uses x as row and y as column
                 #This is reverse of the problem spec
-                self.crash = int(cart.location.real), int(cart.location.imag)
+                self.crashes.append((int(cart.location.real), int(cart.location.imag)))
+                self.carts.remove(cart)
+                self.carts.remove(other_cart)
+                print('new number of carts: {size}'.format(
+                    size=len(self.carts)))
                 return
 
 def take_curve(heading, curve):
@@ -120,13 +129,24 @@ def take_curve(heading, curve):
 
 LINE = Minecarts('line.txt')
 LINE.run()
-assert LINE.crash == (0, 3)
+assert LINE.crashes[0] == (0, 3)
 
 SAMPLE = Minecarts('sample.txt')
 SAMPLE.run()
-assert SAMPLE.crash == (7, 3)
+assert SAMPLE.crashes[0] == (7, 3)
+
+SAMPLE = Minecarts('sample_pt2.txt')
+LAST_CART = SAMPLE.run()
+print(SAMPLE.crashes)
+assert SAMPLE.crashes[0] == (2, 0)
+assert SAMPLE.crashes[1] == (4, 2)
+assert SAMPLE.crashes[2] == (4, 6)
+assert SAMPLE.crashes[3] == (4, 2)
+assert LAST_CART == (6, 4)
 
 PROBLEM = Minecarts('input.txt')
-PROBLEM.run()
+LAST_CART = PROBLEM.run()
 print('Answer to Part 1: {ans}'.format(
-    ans=PROBLEM.crash))
+    ans=PROBLEM.crashes[0]))
+print('Answer to Part 2: {ans}'.format(
+    ans=LAST_CART))

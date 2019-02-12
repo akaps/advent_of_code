@@ -52,7 +52,7 @@ class Cart:
 
     def __lt__(self, other):
         if self.location.imag == other.location.imag:
-            return self.location.real > other.location.real
+            return self.location.real < other.location.real
         return self.location.imag < other.location.imag
 
 class Minecarts:
@@ -108,7 +108,6 @@ class Minecarts:
                 #This is reverse of the problem spec
                 self.crash = int(cart.location.real), int(cart.location.imag)
                 return
-
 
 def take_curve(heading, curve):
     if curve == '\\':

@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 NORTH = '^'
 SOUTH = 'v'
 WEST = '<'
@@ -23,9 +25,11 @@ def direction(char):
 
 #implementing carts as a complex vector
 #y is flipped, so -j is up, and j is down
+@total_ordering
 class Cart:
-    def __init__(self, location, heading):
+    def __init__(self, name, location, heading):
         assert heading != 0j
+        self.name = name
         self.location = location
         self.direction = heading
         self.next_turn = 0
@@ -41,12 +45,20 @@ class Cart:
         self.next_turn = (self.next_turn + 1) % 3
 
     def __repr__(self):
-        return 'Cart at {p} going {dir}'.format(p=self.location, dir=self.direction)
+        return 'Cart {name} at {p} going {dir}'.format(
+            name=self.name,
+            p=self.location,
+            dir=self.direction)
+
+    def __lt__(self, other):
+        if self.location.imag == other.location.imag:
+            return self.location.real > other.location.real
+        return self.location.imag < other.location.imag
 
 class Minecarts:
     def __init__(self, file_name):
         file = open(file_name, 'r')
-        lines = [x.strip() for x in file.readlines()]
+        lines = [x.rstrip() for x in file.readlines()]
         file.close()
         self.generate_track(lines)
         self.crash = None
@@ -54,6 +66,7 @@ class Minecarts:
     def generate_track(self, lines):
         self.track = []
         self.carts = []
+        i = 0
         for line_enum in enumerate(lines):
             to_process = list(line_enum[1])
             for char_enum in enumerate(to_process):
@@ -61,7 +74,8 @@ class Minecarts:
                 if char in DIRECTIONS:
                     #make a cart
                     point = (line_enum[0] * 1j + char_enum[0])
-                    self.carts.append(Cart(point, direction(char)))
+                    self.carts.append(Cart(i, point, direction(char)))
+                    i += 1
                     #replace the track with the proper representation
                     if char in (EAST, WEST):
                         to_process[char_enum[0]] = HORIZONTAL
@@ -71,41 +85,29 @@ class Minecarts:
 
     def run(self):
         while not self.crash:
-            self.move_carts()
-            self.check_for_crashes()
+            self.carts.sort()
+            for cart in self.carts:
+                cart.move()
+                self.check_for_crash(cart)
+                self.turn_cart(cart)
 
-    def move_carts(self):
-        for cart in self.carts:
-            self.validate_cart(cart)
-            cart.move()
-            new_loc = cart.location
-            track = self.track[int(new_loc.imag)][int(new_loc.real)]
-            if track in CURVES:
-                print('turn for {cart}'.format(cart=cart))
-                cart.turn(take_curve(cart.direction, track))
-                print('Cart is now {cart}'.format(cart=cart))
-            elif track == JUNCTION:
-                print('junction for {cart}'.format(cart=cart))
-                cart.turn(TURNS[cart.next_turn])
-                cart.update_turn_behavior()
-                print('Cart is now {cart}'.format(cart=cart))
+    def turn_cart(self, cart):
+        track = self.track[int(cart.location.imag)][int(cart.location.real)]
+        if track in CURVES:
+            cart.turn(take_curve(cart.direction, track))
+        elif track == JUNCTION:
+            cart.turn(TURNS[cart.next_turn])
+            cart.update_turn_behavior()
 
-    def validate_cart(self, cart):
-        track_piece = self.track[int(cart.location.imag)][int(cart.location.real)]
-        if cart.direction in (EAST, EAST):
-            assert track_piece in (HORIZONTAL, JUNCTION) or track_piece in CURVES
-        elif cart.direction in (NORTH, SOUTH):
-            assert track_piece in (VERTICAL, JUNCTION) or track_piece in CURVES
-
-    def check_for_crashes(self):
-        for cart in self.carts:
-            for other_cart in [c for c in self.carts if c != cart]:
-                if cart.location == other_cart.location:
-                    print('BANG!')
-                    #Hack, implementation uses x as row and y as column
-                    #This is reverse of the problem spec
-                    self.crash = int(cart.location.real), int(cart.location.imag)
-                    return
+    def check_for_crash(self, cart):
+        for other_cart in [c for c in self.carts if c != cart]:
+            if cart.location == other_cart.location:
+                print('CRASH at {loc}'.format(
+                    loc=cart.location))
+                #Hack, implementation uses x as row and y as column
+                #This is reverse of the problem spec
+                self.crash = int(cart.location.real), int(cart.location.imag)
+                return
 
 
 def take_curve(heading, curve):
@@ -113,7 +115,7 @@ def take_curve(heading, curve):
         if heading.real == 0: #N/S heading
             return LEFT
         return RIGHT
-    if heading.real == 0:
+    if heading.real == 0: #N/S heading
         return RIGHT
     return LEFT
 
@@ -127,4 +129,5 @@ assert SAMPLE.crash == (7, 3)
 
 PROBLEM = Minecarts('input.txt')
 PROBLEM.run()
-print('Answer to Part 1: {ans}'.format(ans=PROBLEM.crash))
+print('Answer to Part 1: {ans}'.format(
+    ans=PROBLEM.crash))

@@ -138,6 +138,11 @@ SAMPLE = Minecarts('sample.txt')
 SAMPLE.run()
 assert SAMPLE.crashes[0] == (7, 3)
 
+PROBLEM = Minecarts('input.txt')
+LAST_CART = PROBLEM.run()
+print('Answer to Part 1: {ans}'.format(
+    ans=PROBLEM.crashes[0]))
+
 SAMPLE = Minecarts('sample_pt2.txt')
 LAST_CART = SAMPLE.run()
 assert SAMPLE.crashes[0] == (2, 0)
@@ -146,9 +151,14 @@ assert SAMPLE.crashes[2] == (6, 4)
 assert SAMPLE.crashes[3] == (2, 4)
 assert LAST_CART == (6, 4)
 
-PROBLEM = Minecarts('input.txt')
-LAST_CART = PROBLEM.run()
-print('Answer to Part 1: {ans}'.format(
-    ans=PROBLEM.crashes[0]))
+CRASHES = PROBLEM.crashes
+assert CRASHES[0] == (28, 107)
+assert CRASHES[1] == (47, 103)
+assert CRASHES[2] == (91, 85)
+assert CRASHES[3] == (6, 80)
+assert CRASHES[4] == (39, 54)
+assert CRASHES[5] == (134, 37)
+assert CRASHES[6] == (26, 100)
+assert CRASHES[7] == (-1, -1)
 print('Answer to Part 2: {ans}'.format(
     ans=LAST_CART))

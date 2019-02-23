@@ -12,6 +12,9 @@ class Mancala:
             for index in range(redistribute + 1, redistribute + total + 1): #can pigeonhole
                 self.banks[index % len(self.banks)] += 1
 
+    def length_of_loop(self):
+        return len(self.configs) - self.configs.index(self.banks)
+
 SAMPLE = Mancala([0, 2, 7, 0])
 SAMPLE.reallocate()
 assert len(SAMPLE.configs) == 5
@@ -20,7 +23,9 @@ assert SAMPLE.configs[1] == [2, 4, 1, 2]
 assert SAMPLE.configs[2] == [3, 1, 2, 3]
 assert SAMPLE.configs[3] == [0, 2, 3, 4]
 assert SAMPLE.configs[4] == [1, 3, 4, 1]
+assert SAMPLE.length_of_loop() == 4
 
 PROBLEM = Mancala([0, 5, 10, 0, 11, 14, 13, 4, 11, 8, 8, 7, 1, 4, 12, 11])
 PROBLEM.reallocate()
 print('Answer to part 1: {ans}'.format(ans=len(PROBLEM.configs)))
+print('Answer to part 2: {ans}'.format(ans=PROBLEM.length_of_loop()))

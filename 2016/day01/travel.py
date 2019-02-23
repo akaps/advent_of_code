@@ -1,43 +1,49 @@
 import re
 
-class ComplexPoint:
+class ComplexVector:
     def __init__(self):
-        self.position = 0j
+        self.magnitude = 0j
         self.direction = 1j #facing north, or 1j
 
-    def turn(self, turn):
+    def rotate(self, turn):
         self.direction *= turn
 
-    def move(self, dist):
-        self.position += dist * self.direction
+    def translate(self, dist):
+        self.magnitude += dist * self.direction
 
 def walk(moves):
     moves = re.split(', ', moves.strip())
-    point = ComplexPoint()
+    point = ComplexVector()
     for move in moves:
-        turn, dist = move[0], int(move[1:])
-        if turn == 'L':
-            point.turn(-1j)
-        if turn == 'R':
-            point.turn(1j)
-        point.move(dist)
-    return abs(point.position.real) + abs(point.position.imag)
+        turn, dist = parse_move(move)
+        handle_turn(turn, point)
+        point.translate(dist)
+    return manhattan_distance(point)
+
+def parse_move(move):
+    return move[0], int(move[1:])
+
+def manhattan_distance(point):
+    return abs(point.magnitude.real) + abs(point.magnitude.imag)
+
+def handle_turn(turn, point):
+    if turn == 'L':
+        point.rotate(-1j)
+    if turn == 'R':
+        point.rotate(1j)
 
 def first_repeat(moves):
     moves = re.split(', ', moves.strip())
-    point = ComplexPoint()
-    visited = [point.position]
+    point = ComplexVector()
+    visited = [point.magnitude]
     for move in moves:
-        turn, dist = move[0], int(move[1:])
-        if turn == 'L':
-            point.turn(-1j)
-        if turn == 'R':
-            point.turn(1j)
+        turn, dist = parse_move(move)
+        handle_turn(turn, point)
         for _ in range(dist):
-            point.move(1)
-            if point.position in visited:
-                return abs(point.position.real) + abs(point.position.imag)
-            visited.append(point.position)
+            point.translate(1)
+            if point.magnitude in visited:
+                return manhattan_distance(point)
+            visited.append(point.magnitude)
     return -1
 
 assert walk('R2, L3') == 5

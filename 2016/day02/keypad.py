@@ -40,4 +40,4 @@ SAMPLE = utils.read_lines('sample.txt')
 assert determine_code(SAMPLE) == '1985'
 
 PROBLEM = utils.read_lines('input.txt')
-utils.pretty_print_answer(1, ddetermine_code(PROBLEM))
+utils.pretty_print_answer(1, determine_code(PROBLEM))

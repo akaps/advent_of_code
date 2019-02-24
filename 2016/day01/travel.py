@@ -1,15 +1,5 @@
 import re
-
-class ComplexVector:
-    def __init__(self):
-        self.magnitude = 0j
-        self.direction = 1j #facing north, or 1j
-
-    def rotate(self, turn):
-        self.direction *= turn
-
-    def translate(self, dist):
-        self.magnitude += dist * self.direction
+from complexvector import ComplexVector
 
 def walk(moves):
     moves = re.split(', ', moves.strip())

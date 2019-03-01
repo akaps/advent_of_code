@@ -6,32 +6,23 @@ class Cells:
         self.populate_cells(size, serial)
 
     def populate_cells(self, size, serial):
-        self.cells = []
+        self.serial = serial
         self.cell_sums = []
         for row in range(size):
-            self.cells.append([])
             self.cell_sums.append([])
             for col in range(0, size):
-                self.cells[row].append(calculate(row + 1, col + 1, serial))
                 self.cell_sums[row].append(self.summed_area(row, col))
 
     def find_most_power(self, size):
         x_max, y_max = -1, -1
         max_power = -math.inf
-        for row in range(len(self.cells) - size - 1):
-            for col in range(len(self.cells) - size - 1):
-                total = self.total_power(row, col, size)
+        for row in range(len(self.cell_sums) - size - 1):
+            for col in range(len(self.cell_sums) - size - 1):
+                total = self.sum_area(row, col, size)
                 if total > max_power:
                     x_max, y_max = row + 1, col + 1
                     max_power = total
-        return x_max, y_max
-
-    def total_power(self, row, col, size):
-        total = 0
-        for i in range(size):
-            for j in range(size):
-                total += self.cells[row + i][col + j]
-        return total
+        return x_max + 1, y_max + 1
 
     def most_power_square(self):
         max_sum = self.cell_sums[0][0]
@@ -46,17 +37,15 @@ class Cells:
         return max_x, max_y, max_size
 
     def sum_area(self, row, col, size):
-        row -= 1
-        col -= 1
         return (self.cell_sums[row][col]
-                - self.cell_sums[row - size][col]
-                - self.cell_sums[row][col - size]
-                + self.cell_sums[row - size][col - size])
+                - self.cell_sums[row + size][col]
+                - self.cell_sums[row][col + size]
+                + self.cell_sums[row + size][col + size])
 
     def summed_area(self, row, col):
         prev_col = col - 1
         prev_row = row - 1
-        return (self.cells[row][col]
+        return (calculate(row + 1, col + 1, self.serial)
                 + (self.cell_sums[row][prev_col] if prev_col >= 0 else 0)
                 + (self.cell_sums[prev_row][col] if prev_row >= 0 else 0)
                 - (self.cell_sums[prev_row][prev_col] if prev_row >= 0 and prev_col >= 0 else 0))
@@ -83,16 +72,9 @@ CELLS = Cells(7803, 300)
 X, Y = CELLS.find_most_power(3)
 print('most 3x3 power at ({x},{y})'.format(x=X, y=Y))
 
-assert GRID_18.total_power(32, 44, 3) == 29 #internal function, true indexes
 assert GRID_18.sum_area(33, 45, 3) == 29
-
-assert GRID_42.total_power(20, 60, 3) == 30
-assert GRID_42.sum_area(21, 61, 3) == 30
-
-assert GRID_18.total_power(89, 268, 16) == 113
 assert GRID_18.sum_area(90, 269, 16) == 113
-
-assert GRID_42.total_power(231, 250, 12) == 119
+assert GRID_42.sum_area(21, 61, 3) == 30
 assert GRID_42.sum_area(232, 251, 12) == 119
 
 X, Y, SIZE = GRID_18.most_power_square()

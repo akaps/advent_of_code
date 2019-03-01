@@ -16,21 +16,21 @@ class Cells:
                 self.cells[row][col] = calculate(row + 1, col + 1, serial)
                 self.cell_sums[row][col] = self.summed_area(row, col)
 
-    def find_most_power(self):
+    def find_most_power(self, size):
         x_max, y_max = -1, -1
         max_power = -math.inf
-        for row in range(len(self.cells) - 2):
-            for col in range(len(self.cells) - 2):
-                total = self.total_power(row, col)
+        for row in range(len(self.cells) - size - 1):
+            for col in range(len(self.cells) - size - 1):
+                total = self.total_power(row, col, size)
                 if total > max_power:
                     x_max, y_max = row + 1, col + 1
                     max_power = total
         return x_max, y_max
 
-    def total_power(self, row, col):
+    def total_power(self, row, col, size):
         total = 0
-        for i in range(3):
-            for j in range(3):
+        for i in range(size):
+            for j in range(size):
                 total += self.cells[row + i][col + j]
         return total
 
@@ -62,15 +62,6 @@ class Cells:
                 + (self.cell_sums[prev_row][col] if prev_row >= 0 else 0)
                 - (self.cell_sums[prev_row][prev_col] if prev_row >= 0 and prev_col >= 0 else 0))
 
-    def power_square(self, row, col, size):
-        total = 0
-        row -= 1
-        col -= 1
-        for i in range(row, row + size):
-            for j in range(col, col + size):
-                total += self.cells[i][j]
-        return total
-
 def calculate(row, col, serial):
     return ((col * (row + 10) + serial) * (row + 10) // 100 % 10) - 5
 
@@ -80,18 +71,30 @@ assert calculate(217, 196, 39) == 0
 assert calculate(101, 153, 71) == 4
 
 GRID_18 = Cells(18, 300)
-X, Y = GRID_18.find_most_power()
+X, Y = GRID_18.find_most_power(3)
 assert X == 33
 assert Y == 45
 
 GRID_42 = Cells(42, 300)
-X, Y = GRID_42.find_most_power()
+X, Y = GRID_42.find_most_power(3)
 assert X == 21
 assert Y == 61
 
 CELLS = Cells(7803, 300)
-X, Y = CELLS.find_most_power()
+X, Y = CELLS.find_most_power(3)
 print('most 3x3 power at ({x},{y})'.format(x=X, y=Y))
+
+assert GRID_18.total_power(32, 44, 3) == 29 #internal function, true indexes
+assert GRID_18.sum_area(33, 45, 3) == 29
+
+assert GRID_42.total_power(20, 60, 3) == 30
+assert GRID_42.sum_area(21, 61, 3) == 30
+
+assert GRID_18.total_power(89, 268, 16) == 113
+assert GRID_18.sum_area(90, 269, 16) == 113
+
+assert GRID_42.total_power(231, 250, 12) == 119
+assert GRID_42.sum_area(232, 251, 12) == 119
 
 X, Y, SIZE = GRID_18.most_power_square()
 assert X == 90
@@ -102,18 +105,6 @@ X, Y, SIZE = GRID_42.most_power_square()
 assert X == 232
 assert Y == 251
 assert SIZE == 12
-
-assert GRID_18.power_square(33, 45, 3) == 29
-assert GRID_18.sum_area(33, 45, 3) == 29
-
-assert GRID_42.power_square(21, 61, 3) == 30
-assert GRID_42.sum_area(21, 61, 3) == 30
-
-assert GRID_18.power_square(90, 269, 16) == 113
-assert GRID_18.sum_area(90, 269, 16) == 113
-
-assert GRID_42.power_square(232, 251, 12) == 119
-assert GRID_42.sum_area(232, 251, 12) == 119
 
 X, Y, SIZE = CELLS.most_power_square()
 print('most power at square ({x},{y},{size})'.format(x=X, y=Y, size=SIZE))

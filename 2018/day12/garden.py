@@ -43,6 +43,8 @@ class Garden:
         self.pots = self.initialize_pots(lines[0])
         self.rules = self.initialize_rules(lines[2:])
         self.initial_loc = 0
+        self.repeating = False
+        self.num_generations = 0
 
     def initialize_pots(self, line):
         return list(re.search('([.#]+)', line)[0])
@@ -65,7 +67,10 @@ class Garden:
         for rule in self.rules:
             if rule.matches(self.pots, len(self.pots)) and rule.result == '#':
                 next_generation.append(rule.result)
+        if ''.join(self.pots) in ''.join(next_generation):
+            self.repeating = True
         self.pots = next_generation
+        self.num_generations += 1
 
     def score(self):
         total = 0
@@ -121,8 +126,13 @@ assert 325 == SAMPLE.score()
 GARDEN = Garden('input.txt')
 for _ in range(20):
     GARDEN.grow()
-print(GARDEN.score())
+print('Answer to part 1: {ans}'.format(ans=GARDEN.score()))
 
-for _ in range(50000000000-20):
+while not GARDEN.repeating:
     GARDEN.grow()
-print(GARDEN.score())
+glider_generation = GARDEN.num_generations
+gliders = GARDEN.pots.count('#')
+res = (50000000000 - glider_generation) * gliders + GARDEN.score()
+print('Answer to part 2: {ans}'.format(ans=res))
+# (50 billion - iterations to get to gliders) * glider pack count + score from previous iterations.
+#from aoc solutions. I'm a dirty cheat for a weird problem

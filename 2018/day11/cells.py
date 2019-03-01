@@ -83,32 +83,37 @@ GRID_18 = Cells(18, 300)
 X, Y = GRID_18.find_most_power()
 assert X == 33
 assert Y == 45
-assert GRID_18.power_square(33, 45, 3) == 29
-assert GRID_18.sum_area(33, 45, 3) == 29
 
 GRID_42 = Cells(42, 300)
 X, Y = GRID_42.find_most_power()
 assert X == 21
 assert Y == 61
-assert GRID_42.power_square(21, 61, 3) == 30
-assert GRID_18.sum_area(21, 61, 3) == 30
+
+CELLS = Cells(7803, 300)
+X, Y = CELLS.find_most_power()
+print('most 3x3 power at ({x},{y})'.format(x=X, y=Y))
 
 X, Y, SIZE = GRID_18.most_power_square()
-assert GRID_18.power_square(90, 269, 16) == 113
-assert GRID_18.sum_area(90, 269, 16) == 113
 assert X == 90
 assert Y == 269
 assert SIZE == 16
 
 X, Y, SIZE = GRID_42.most_power_square()
-assert GRID_42.power_square(232, 251, 12) == 119
-assert GRID_18.sum_area(232, 251, 12) == 119
 assert X == 232
 assert Y == 251
 assert SIZE == 12
 
-CELLS = Cells(7803, 300)
-X, Y = CELLS.find_most_power()
-print('most 3x3 power at ({x},{y})'.format(x=X, y=Y))
+assert GRID_18.power_square(33, 45, 3) == 29
+assert GRID_18.sum_area(33, 45, 3) == 29
+
+assert GRID_42.power_square(21, 61, 3) == 30
+assert GRID_42.sum_area(21, 61, 3) == 30
+
+assert GRID_18.power_square(90, 269, 16) == 113
+assert GRID_18.sum_area(90, 269, 16) == 113
+
+assert GRID_42.power_square(232, 251, 12) == 119
+assert GRID_42.sum_area(232, 251, 12) == 119
+
 X, Y, SIZE = CELLS.most_power_square()
 print('most power at square ({x},{y},{size})'.format(x=X, y=Y, size=SIZE))

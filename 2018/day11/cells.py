@@ -8,13 +8,12 @@ class Cells:
     def populate_cells(self, size, serial):
         self.cells = []
         self.cell_sums = []
-        for _ in range(size):
-            self.cells.append([0] * size)
-            self.cell_sums.append([0] * size)
         for row in range(size):
+            self.cells.append([])
+            self.cell_sums.append([])
             for col in range(0, size):
-                self.cells[row][col] = calculate(row + 1, col + 1, serial)
-                self.cell_sums[row][col] = self.summed_area(row, col)
+                self.cells[row].append(calculate(row + 1, col + 1, serial))
+                self.cell_sums[row].append(self.summed_area(row, col))
 
     def find_most_power(self, size):
         x_max, y_max = -1, -1

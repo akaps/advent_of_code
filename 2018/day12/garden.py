@@ -5,103 +5,96 @@ DEAD = '.'
 ALIVE = '#'
 
 class Rule:
-    def __init__(self, input):
-        self.pattern, self.result = re.split(' => ', input)
+    def __init__(self, rule):
+        self.matching, self.result = re.search(r'(.|#) => (.|#)')[0].groups()
 
-    def __repr__(self):
-        return 'if {pattern}, then {res}'.format(pattern=self.pattern, res=self.result)
+    def matches(self, pots, index):
+        check = ''
+        if index == 0:
+            check = '..' + pots[index: index + 3]
+        elif index == 1:
+            check = '.' + pots[index - 1: index + 3]
+        else:
+            check = pots[index - 2: index + 3]
+        return check == self.matching
 
 class Garden:
-    def __init__(self, input):
-        initial_state = input[0].strip()
-        self.pots = re.split('initial state: ', initial_state)[1]
-        self.zero_index = 0
-        self.rules = []
-        for rule in input[2:]:
-            self.rules.append(Rule(rule.strip()))
+    def __init__(self, file_name):
+        file = open(file_name)
+        lines = file.readlines()
+        file.close()
+        self.pots = self.initialize_pots(lines[0])
+        self.rules = self.initialize_rules(lines[2:])
+        self.initial_loc = 0
+        print(self.pots)
+        print(self.rules)
+
+    def initialize_pots(self, line):
+        return list(re.search('Initial State: (.|#)*', line)[0].groups())
+
+    def initialize_rules(self, rules):
+        return [Rule(rule) for rule in rules]
 
     def grow(self):
-        next_generation = ''
-        for i in range(len(self.pots)):
-            pot = self.neighboring_pots(i)
-            rule_to_apply = None
+        next_generation = []
+        for index in enumerate(self.pots):
             for rule in self.rules:
-                if not rule_to_apply and rule.pattern == pot:
-                    rule_to_apply = rule
-            next_generation += rule_to_apply.result if rule_to_apply else '.'
+                if rule.matches_rule(self.pots, index):
+                    next_generation.append(rule.result)
         self.pots = next_generation
 
-    def neighboring_pots(self, index):
-        res = ''
-        for i in range(-2, 3):
-            if self.oob(index + i):
-                res += '.'
-            else:
-                res += self.pots[index + i]
-        return res
-
     def score(self):
-        res = 0
-        for i in range(0, len(self.pots)):
-            if self.pots[i] == ALIVE:
-                res += i - self.zero_index
-        return res
+        total = 0
+        for pot in enumerate(self.pots):
+            if pot[1] == ALIVE:
+                total += pot[0] - self.initial_loc
+        return total
 
-    def oob(self, index):
-        return index < 0 or index >= len(self.pots)
+SAMPLE = Garden('sample.txt')
+assert SAMPLE.pots == list('#..#.#..##......###...###')
+SAMPLE.grow() #1
+assert SAMPLE.pots == list('#...#....#.....#..#..#..#')
+SAMPLE.grow() #2
+assert SAMPLE.pots == list('##..##...##....#..#..#..##')
+SAMPLE.grow() #3
+assert SAMPLE.pots == list('#.#...#..#.#....#..#..#...#')
+SAMPLE.grow() #4
+assert SAMPLE.pots == list('.#.#..#...#.#...#..#..##..##')
+SAMPLE.grow() #5
+assert SAMPLE.pots == list('..#...##...#.#..#..#...#...#')
+SAMPLE.grow() #6
+assert SAMPLE.pots == list('..##.#.#....#...#..##..##..##')
+SAMPLE.grow() #7
+assert SAMPLE.pots == list('.#..###.#...##..#...#...#...#')
+SAMPLE.grow() #8
+assert SAMPLE.pots == list('.#....##.#.#.#..##..##..##..##')
+SAMPLE.grow() #9
+assert SAMPLE.pots == list('.##..#..#####....#...#...#...#')
+SAMPLE.grow() #10
+assert SAMPLE.pots == list('#.#..#...#.##....##..##..##..##')
+SAMPLE.grow() #11
+assert SAMPLE.pots == list('.#...##...#.#...#.#...#...#...#')
+SAMPLE.grow() #12
+assert SAMPLE.pots == list('.##.#.#....#.#...#.#..##..##..##')
+SAMPLE.grow() #13
+assert SAMPLE.pots == list('#..###.#....#.#...#....#...#...#')
+SAMPLE.grow() #14
+assert SAMPLE.pots == list('#....##.#....#.#..##...##..##..##')
+SAMPLE.grow() #15
+assert SAMPLE.pots == list('##..#..#.#....#....#..#.#...#...#')
+SAMPLE.grow() #16
+assert SAMPLE.pots == list('#.#..#...#.#...##...#...#.#..##..##')
+SAMPLE.grow() #17
+assert SAMPLE.pots == list('.#...##...#.#.#.#...##...#....#...#')
+SAMPLE.grow() #18
+assert SAMPLE.pots == list('.##.#.#....#####.#.#.#...##...##..##')
+SAMPLE.grow() #19
+assert SAMPLE.pots == list('#..###.#..#.#.#######.#.#.#..#.#...#')
+SAMPLE.grow() #20
+assert SAMPLE.pots == list('#....##....#####...#######....#.#..##')
+assert 325 == SAMPLE.score()
 
-    def __repr__(self):
-        return str(self.pots)
-
-file = open('sample.txt')
-garden = Garden(file.readlines())
-file.close()
-assert garden.pots in '...#..#.#..##......###...###...........'
-garden.grow() #1
-assert garden.pots in '...#...#....#.....#..#..#..#...........'
-garden.grow() #2
-assert garden.pots in '...##..##...##....#..#..#..##..........'
-garden.grow() #3
-assert garden.pots in '..#.#...#..#.#....#..#..#...#..........'
-garden.grow() #4
-assert garden.pots in '...#.#..#...#.#...#..#..##..##.........'
-garden.grow() #5
-assert garden.pots in '....#...##...#.#..#..#...#...#.........'
-garden.grow() #6
-assert garden.pots in '....##.#.#....#...#..##..##..##........'
-garden.grow() #7
-assert garden.pots in '...#..###.#...##..#...#...#...#........'
-garden.grow() #8
-assert garden.pots in '...#....##.#.#.#..##..##..##..##.......'
-garden.grow() #9
-assert garden.pots in '...##..#..#####....#...#...#...#.......'
-garden.grow() #10
-assert garden.pots in '..#.#..#...#.##....##..##..##..##......'
-garden.grow() #11
-assert garden.pots in '...#...##...#.#...#.#...#...#...#......'
-garden.grow() #12
-assert garden.pots in '...##.#.#....#.#...#.#..##..##..##.....'
-garden.grow() #13
-assert garden.pots in '..#..###.#....#.#...#....#...#...#.....'
-garden.grow() #14
-assert garden.pots in '..#....##.#....#.#..##...##..##..##....'
-garden.grow() #15
-assert garden.pots in '..##..#..#.#....#....#..#.#...#...#....'
-garden.grow() #16
-assert garden.pots in '.#.#..#...#.#...##...#...#.#..##..##...'
-garden.grow() #17
-assert garden.pots in '..#...##...#.#.#.#...##...#....#...#...'
-garden.grow() #18
-assert garden.pots in '..##.#.#....#####.#.#.#...##...##..##..'
-garden.grow() #19
-assert garden.pots in '.#..###.#..#.#.#######.#.#.#..#.#...#..'
-garden.grow() #20
-assert garden.pots in '.#....##....#####...#######....#.#..##.'
-assert 325 == garden.score()
-
-file = open('input.txt')
-garden = Garden(file.readlines())
-file.close()
+GARDEN = Garden('input.txt')
 for _ in range(20):
-    garden.grow()
-print(garden.score())
+    GARDEN.grow()
+print(GARDEN.score())

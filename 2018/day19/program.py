@@ -1,5 +1,5 @@
 import re
-from aoc_2018.computer import Computer
+from computer import Computer
 
 class Registers:
     def __init__(self, ip, instr):
@@ -18,7 +18,7 @@ def process_input(file_name):
     ip = int(re.findall('\d', file.readline())[0])
     instructions = file.readlines()
     file.close()
-    computer = Computer(6, ip, instructions) 
+    computer = Computer(6, ip, instructions)
     computer.run()
     return computer.registers[0]
 

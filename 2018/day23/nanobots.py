@@ -1,12 +1,12 @@
 import re
-import aoc_2018.utils as utils
+import utils as utils
 
 class Nanobots:
     def __init__(self, lines):
         self.radius = -1
         self.center = None
         self.nanobots = []
-        for line in lines: 
+        for line in lines:
             x, y, z, rad = map(int, re.findall('-?\d+', line))
             if rad > self.radius:
                 self.radius = rad

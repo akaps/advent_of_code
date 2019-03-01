@@ -1,5 +1,5 @@
 import re
-import aoc_2018.utils as utils
+import utils as utils
 
 class Coordinates:
 

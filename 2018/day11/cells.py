@@ -28,9 +28,8 @@ class Cells:
         max_sum = self.cell_sums[0][0]
         max_x = max_y = max_size = -1
         for size in range(1, 301):
-            print(size)
-            row, col = self.find_most_power_for_size(size)
-            if self.total_power(row - 1, col - 1, size) > max_sum:
+            disp_row, disp_col = self.find_most_power_for_size(size)
+            if self.total_power(disp_row - 1, disp_col - 1, size) > max_sum:
                 max_x = row
                 max_y = col
                 max_size = size
@@ -78,15 +77,15 @@ assert GRID_18.total_power(90, 269, 16) == 113
 assert GRID_42.total_power(21, 61, 3) == 30
 assert GRID_42.total_power(232, 251, 12) == 119
 
-X, Y, SIZE = GRID_18.most_power_square()
+X, Y, SIZE = GRID_18.find_most_power()
 assert X == 90
 assert Y == 269
 assert SIZE == 16
 
-X, Y, SIZE = GRID_42.most_power_square()
+X, Y, SIZE = GRID_42.find_most_power()
 assert X == 232
 assert Y == 251
 assert SIZE == 12
 
-X, Y, SIZE = CELLS.most_power_square()
+X, Y, SIZE = CELLS.find_most_power()
 print('most power at square ({x},{y},{size})'.format(x=X, y=Y, size=SIZE))

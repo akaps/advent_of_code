@@ -11,11 +11,16 @@ class Program:
         self.ip_index = determine_ip(lines.pop(0))
         self.instructions = parse_lines(lines)
 
-    def run(self):
+    def run(self, debug=False):
         while 0 <= self.registers[self.ip_index] < len(self.instructions):
             ip = self.registers[self.ip_index]
             opcode, a, b, c = self.instructions[ip]
             output = comp.execute(opcode, self.registers, a, b, c)
+            if debug:
+                print('{ip}: {input} -> {instr} -> {output}'.format(ip=ip,
+                                                                    input=self.registers,
+                                                                    instr=self.instructions[ip],
+                                                                    output=output))
             self.registers = output
             self.registers[self.ip_index] += 1
 
@@ -37,3 +42,7 @@ assert SAMPLE.registers[0] == 7
 PROBLEM = Program('input.txt')
 PROBLEM.run()
 utils.pretty_print_answer(1, PROBLEM.registers[0])
+
+PROBLEM.registers = [1, 0, 0, 0, 0, 0]
+PROBLEM.run()
+utils.pretty_print_answer(2, PROBLEM.registers[0])

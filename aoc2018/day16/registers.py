@@ -1,5 +1,5 @@
 import re
-from computer import Computer
+from aoc2018.computer import Computer
 
 def is_command(command_name, command, reg_bef, reg_aft):
     check = command_name(command, reg_bef)

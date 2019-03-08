@@ -6,17 +6,34 @@ ALIVE = '#'
 
 class Rule:
     def __init__(self, rule):
-        self.matching, self.result = re.search(r'(.|#) => (.|#)')[0].groups()
+        self.matching, self.result = re.split(r' => ', rule.strip())
 
     def matches(self, pots, index):
-        check = ''
-        if index == 0:
-            check = '..' + pots[index: index + 3]
+        check = []
+        if index == -1:
+            check = ['.', '.', '.']
+            check.extend(pots[0 : 2])
+        elif index == 0:
+            check = ['.', '.']
+            check.extend(pots[0 : 3])
         elif index == 1:
-            check = '.' + pots[index - 1: index + 3]
+            check = ['.']
+            check.extend(pots[0 : 4])
+        elif index == len(pots) - 2:
+            check.extend(pots[index - 2 : index + 3])
+            check.append('.')
+        elif index == len(pots) - 1:
+            check.extend(pots[index - 2 : index + 3])
+            check.extend(['.', '.'])
+        elif index == len(pots):
+            check.extend(pots[index - 2 : index + 3])
+            check.extend(['.', '.', '.'])
         else:
-            check = pots[index - 2: index + 3]
-        return check == self.matching
+            check = pots[index - 2 : index + 3]
+        return ''.join(check) == self.matching
+
+    def __repr__(self):
+        return str([self.matching, self.result])
 
 class Garden:
     def __init__(self, file_name):
@@ -26,22 +43,34 @@ class Garden:
         self.pots = self.initialize_pots(lines[0])
         self.rules = self.initialize_rules(lines[2:])
         self.initial_loc = 0
-        print(self.pots)
-        print(self.rules)
+        self.repeating = False
+        self.num_generations = 0
 
     def initialize_pots(self, line):
-        return list(re.search('Initial State: (.|#)*', line)[0].groups())
+        return list(re.search('([.#]+)', line)[0])
 
     def initialize_rules(self, rules):
         return [Rule(rule) for rule in rules]
 
     def grow(self):
         next_generation = []
+        #check first index...
+        for rule in self.rules:
+            if rule.matches(self.pots, -1) and rule.result == '#':
+                next_generation.append(rule.result)
+                self.initial_loc += 1
         for index in enumerate(self.pots):
             for rule in self.rules:
-                if rule.matches_rule(self.pots, index):
+                if rule.matches(self.pots, index[0]):
                     next_generation.append(rule.result)
+        #check last index...
+        for rule in self.rules:
+            if rule.matches(self.pots, len(self.pots)) and rule.result == '#':
+                next_generation.append(rule.result)
+        if ''.join(self.pots) in ''.join(next_generation):
+            self.repeating = True
         self.pots = next_generation
+        self.num_generations += 1
 
     def score(self):
         total = 0
@@ -97,4 +126,13 @@ assert 325 == SAMPLE.score()
 GARDEN = Garden('input.txt')
 for _ in range(20):
     GARDEN.grow()
-print(GARDEN.score())
+print('Answer to part 1: {ans}'.format(ans=GARDEN.score()))
+
+while not GARDEN.repeating:
+    GARDEN.grow()
+glider_generation = GARDEN.num_generations
+gliders = GARDEN.pots.count('#')
+res = (50000000000 - glider_generation) * gliders + GARDEN.score()
+print('Answer to part 2: {ans}'.format(ans=res))
+# (50 billion - iterations to get to gliders) * glider pack count + score from previous iterations.
+#from aoc solutions. I'm a dirty cheat for a weird problem

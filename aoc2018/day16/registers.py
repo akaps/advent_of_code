@@ -1,15 +1,13 @@
 import re
 import utils
-from aoc2018.computer import INSTRUCTIONS
+import aoc2018.computer as comp
 
-def is_command(cmd_name, code, reg, result):
-    output = list(result)
-    output[code[3]] = INSTRUCTIONS[cmd_name](reg, code[1], code[2])
-    return output == result
+def is_command(opcode, code, reg, result):
+    return result == comp.execute(opcode, reg, code[1], code[2], code[3])
 
 def possibilities(code, reg, result):
     opcodes = []
-    for opcode in INSTRUCTIONS:
+    for opcode in comp.INSTRUCTIONS:
         if is_command(opcode, code, reg, result):
             opcodes.append(opcode)
     return opcodes
@@ -49,8 +47,8 @@ def run_instructions(instructions, opcodes):
     registers = [0, 0, 0, 0]
     for instruction in instructions:
         cmd = parse_command(instruction)
-        cmd_name = opcodes[cmd[0]]
-        registers[cmd[3]] = INSTRUCTIONS[cmd_name](registers, cmd[1], cmd[2])
+        opcode = opcodes[cmd[0]]
+        registers = comp.execute(opcode, registers, cmd[1], cmd[2], cmd[3])
     return registers[0]
 
 #sample input

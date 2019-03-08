@@ -1,4 +1,5 @@
 import re
+import utils
 from aoc2018.computer import INSTRUCTIONS
 
 def is_command(cmd_name, code, reg, result):
@@ -7,16 +8,16 @@ def is_command(cmd_name, code, reg, result):
     return output == result
 
 def possibilities(code, reg, result):
-    total = 0
-    for cmd_name in INSTRUCTIONS:
-        if is_command(cmd_name, code, reg, result):
-            total += 1
-    return total
+    opcodes = []
+    for opcode in INSTRUCTIONS:
+        if is_command(opcode, code, reg, result):
+            opcodes.append(opcode)
+    return opcodes
 
 def find_triples(ops):
     total = 0
     for op in ops:
-        if possibilities(op['command'], op['before'], op['after']) >= 3:
+        if len(possibilities(op['command'], op['before'], op['after'])) >= 3:
             total += 1
     return total
 
@@ -29,11 +30,34 @@ def parse_command(line):
 def parse_after(line):
     return [int(d) for d in re.findall(r'\d', line)]
 
+def determine_opcodes(commands):
+    opcodes = {}
+    while len(opcodes) < 16:
+        command = commands.pop(0)
+        possible_codes = possibilities(command['command'], command['before'], command['after'])
+        for code in opcodes.values():
+            if code in possible_codes:
+                possible_codes.remove(code)
+        if len(possible_codes) == 1:
+            opcodes[command['command'][0]] = possible_codes[0]
+        else:
+            commands.append(command)
+    assert len(opcodes) == 16
+    return opcodes
+
+def run_instructions(instructions, opcodes):
+    registers = [0, 0, 0, 0]
+    for instruction in instructions:
+        cmd = parse_command(instruction)
+        cmd_name = opcodes[cmd[0]]
+        registers[cmd[3]] = INSTRUCTIONS[cmd_name](registers, cmd[1], cmd[2])
+    return registers[0]
+
 #sample input
 assert is_command('mulr', [9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1])
 assert is_command('addi', [9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1])
 assert is_command('seti', [9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1])
-assert 3 == possibilities([9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1])
+assert 3 == len(possibilities([9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1]))
 
 #parsing tests
 assert [9, 2, 1, 2] == parse_command('9 2 1 2')
@@ -82,4 +106,11 @@ with open('input_a.txt', 'r') as file:
 assert len(commands) == 809
 ans = find_triples(commands)
 assert ans < 809
-print('Answer to part 1: {ans}'.format(ans=ans))
+utils.pretty_print_answer(1, ans)
+
+opcodes = determine_opcodes(commands)
+file = open('input_b.txt')
+instructions = file.readlines()
+file.close()
+ans = run_instructions(instructions, opcodes)
+utils.pretty_print_answer(2, ans)

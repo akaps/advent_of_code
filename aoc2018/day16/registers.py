@@ -2,7 +2,6 @@ import re
 from aoc2018.computer import INSTRUCTIONS
 
 def is_command(cmd_name, code, reg, result):
-    print(cmd_name, code, reg, result)
     in_a, in_b = code[1], code[2]
     out = INSTRUCTIONS[cmd_name](reg, in_a, in_b)
     output = list(result)

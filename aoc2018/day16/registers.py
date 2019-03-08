@@ -1,13 +1,13 @@
 import re
 import utils
-import aoc2018.computer as comp
+import aoc2018.processor as processor
 
 def is_command(opcode, code, reg, result):
-    return result == comp.execute(opcode, reg, code[1], code[2], code[3])
+    return result == processor.execute(opcode, reg, code[1], code[2], code[3])
 
 def possibilities(code, reg, result):
     opcodes = []
-    for opcode in comp.INSTRUCTIONS:
+    for opcode in processor.INSTRUCTIONS:
         if is_command(opcode, code, reg, result):
             opcodes.append(opcode)
     return opcodes
@@ -48,7 +48,7 @@ def run_instructions(instructions, opcodes):
     for instruction in instructions:
         cmd = parse_command(instruction)
         opcode = opcodes[cmd[0]]
-        registers = comp.execute(opcode, registers, cmd[1], cmd[2], cmd[3])
+        registers = processor.execute(opcode, registers, cmd[1], cmd[2], cmd[3])
     return registers[0]
 
 #sample input

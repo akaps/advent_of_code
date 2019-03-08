@@ -23,13 +23,13 @@ def find_triples(ops):
     return total
 
 def parse_before(line):
-    return [int(d) for d in re.findall('\d', line)]
+    return [int(d) for d in re.findall(r'\d', line)]
 
 def parse_command(line):
-    return [int(d) for d in re.split(' ', line)]
+    return [int(d) for d in re.split(r' ', line)]
 
 def parse_after(line):
-    return [int(d) for d in re.findall('\d', line)]
+    return [int(d) for d in re.findall(r'\d', line)]
 
 #sample input
 assert is_command('mulr', [9, 2, 1, 2], [3, 2, 1, 1], [3, 2, 2, 1])

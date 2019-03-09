@@ -20,7 +20,7 @@ class Cells:
 
     def find_most_power(self):
         max_x, max_y, max_power, max_size = -1, -1, -math.inf, -1
-        for size in range(1, 50):
+        for size in range(1, 20): #the cells are largely negative, so bigger windows yields negative numbers
             row, col, power = self.find_most_power_for_size(size)
             if power > max_power:
                 max_x, max_y, max_power, max_size = row, col, power, size

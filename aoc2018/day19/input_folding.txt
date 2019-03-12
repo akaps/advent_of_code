@@ -1,0 +1,23 @@
+J: jmp A
+I: a = 1
+G: d = 1
+c = a * d
+jmp B if c==e else C
+C: jmp D
+B: a += b
+D: d += 1
+jmp E if d > e else F
+F: jmp G
+E: b *= 2
+jmp A if b > e else H
+H: jmp I
+A: jmp DONE
+e = (e + 17) * (e + 17) * 209
+c = (c+4)*23+7
+e += c
+jmp ??? (0 or an increment of 1)
+jmp J
+c = 402696
+e += c
+a = 0
+Done:

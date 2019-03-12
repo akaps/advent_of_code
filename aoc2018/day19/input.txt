@@ -34,3 +34,4 @@ muli 3 14 3
 mulr 3 2 3
 addr 5 3 5
 seti 0 9 0
+seti 0 8 2

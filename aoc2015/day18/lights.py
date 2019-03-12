@@ -25,3 +25,13 @@ PROBLEM = Automata('input.txt', STATES, RULES)
 for _ in range(100):
     PROBLEM.next_generation()
 utils.pretty_print_answer(1, PROBLEM.count()[ON])
+
+#part 2, same idea but lights in corner remain on
+PROBLEM = Automata('input.txt', STATES, RULES)
+for _ in range(100):
+    PROBLEM.next_generation()
+    PROBLEM.cells[0][0] = ON
+    PROBLEM.cells[0][99] = ON
+    PROBLEM.cells[99][0] = ON
+    PROBLEM.cells[99][99] = ON
+utils.pretty_print_answer(2, PROBLEM.count()[ON])

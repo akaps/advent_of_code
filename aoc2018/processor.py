@@ -28,20 +28,20 @@ class Program:
 
     def run(self, debug=False):
         while 0 <= self.registers[self.ip_index] < len(self.instructions):
-            ip = self.registers[self.ip_index]
-            opcode, a, b, c = self.instructions[ip]
-            output = execute(opcode, self.registers, a, b, c)
+            instruction_pointer = self.registers[self.ip_index]
+            opcode, param_a, param_b, param_c = self.instructions[instruction_pointer]
+            output = execute(opcode, self.registers, param_a, param_b, param_c)
             if debug:
-                print('{ip}: {input} -> {instr} -> {output}'.format(ip=ip,
+                print('{ip}: {input} -> {instr} -> {output}'.format(ip=instruction_pointer,
                                                                     input=self.registers,
-                                                                    instr=self.instructions[ip],
+                                                                    instr=self.instructions[instruction_pointer],
                                                                     output=output))
             self.registers = output
             self.registers[self.ip_index] += 1
 
-def execute(opcode, reg, a, b, c):
+def execute(opcode, reg, param_a, param_b, param_c):
     new_reg = list(reg)
-    new_reg[c] = INSTRUCTIONS[opcode](reg, a, b)
+    new_reg[param_c] = INSTRUCTIONS[opcode](reg, param_a, param_b)
     return new_reg
 
 def determine_ip(line):

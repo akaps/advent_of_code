@@ -11,17 +11,17 @@ RULES = {
 }
 
 SAMPLE = Automata('sample.txt', STATES, RULES)
-assert SAMPLE.count(ON) == 15
+assert SAMPLE.count()[ON] == 15
 SAMPLE.next_generation()
-assert SAMPLE.count(ON) == 11
+assert SAMPLE.count()[ON] == 11
 SAMPLE.next_generation()
-assert SAMPLE.count(ON) == 8
+assert SAMPLE.count()[ON] == 8
 SAMPLE.next_generation()
-assert SAMPLE.count(ON) == 4
+assert SAMPLE.count()[ON] == 4
 SAMPLE.next_generation()
-assert SAMPLE.count(ON) == 4
+assert SAMPLE.count()[ON] == 4
 
 PROBLEM = Automata('input.txt', STATES, RULES)
 for _ in range(100):
     PROBLEM.next_generation()
-utils.pretty_print_answer(1, PROBLEM.count(ON))
+utils.pretty_print_answer(1, PROBLEM.count()[ON])

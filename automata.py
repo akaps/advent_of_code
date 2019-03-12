@@ -17,18 +17,17 @@ class Automata:
         for row_mod in range(-1, 2):
             for col_mod in range(-1, 2):
                 if (not (row_mod == 0 and col_mod == 0) and
-                    0 <= row + row_mod < len(self.cells) and
-                    0 <= col + col_mod < len(self.cells)):
+                        0 <= row + row_mod < len(self.cells) and
+                        0 <= col + col_mod < len(self.cells)):
                     val = self.cells[row + row_mod][col + col_mod]
                     res[val] += 1
         return res
 
-    def count(self, check):
-        total = 0
+    def count(self):
+        total = dict((key, 0) for key in self.states)
         for row in self.cells:
             for val in row:
-                if val == check:
-                    total += 1
+                total[val] += 1
         return total
 
     def next_generation(self):

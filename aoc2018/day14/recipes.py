@@ -1,4 +1,5 @@
 import copy
+import utils
 
 class Recipes:
 
@@ -18,11 +19,8 @@ class Recipes:
 
     def __repr__(self):
         pretty = copy.deepcopy(self.recipe)
-        for i in range(len(pretty)):
-            if i == self.current:
-                pretty[i] = '({num})'.format(num=pretty[i])
-            elif i == self.next:
-                pretty[i] = '[{num}]'.format(num=pretty[i])
+        pretty[self.current] = '({num})'.format(num=pretty[self.current])
+        pretty[self.next] = '[{num}]'.format(num=pretty[self.next])
         return ' '.join(map(str, pretty))
 
     def next_ten(self, num):
@@ -41,20 +39,19 @@ class Recipes:
 #sample
 recipes = Recipes()
 assert recipes.next_ten(9) == '5158916779'
-assert recipes.length_before('5158916779', 1) == 9
+assert recipes.length_before('51589', 1) == 9
 empty = Recipes()
-assert empty.length_before('5158916779', 1) == 9
+assert empty.length_before('51589', 1) == 9
 assert recipes.next_ten(5) == '0124515891'
-assert recipes.length_before('0124515891', 1) == 5
+assert recipes.length_before('01245', 1) == 5
 assert recipes.next_ten(18) == '9251071085'
-assert recipes.length_before('9251071085', 1) == 18
+assert recipes.length_before('92510', 1) == 18
 assert recipes.next_ten(2018) == '5941429882'
-assert recipes.length_before('5941429882', 1) == 2018
+assert recipes.length_before('59414', 1) == 2018
 
 #input
 ans = recipes.next_ten(409551)
 assert ans == '1631191756'
-print('Answer to part 1: {ans}'.format(ans=ans))
+utils.pretty_print_answer(1, ans)
 
-print('Answer to part 2:')
-print(recipes.length_before('409551', 100000000))
+utils.pretty_print_answer(2, recipes.length_before('409551', 100000))

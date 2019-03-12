@@ -1,11 +1,11 @@
-addi 2 16 2     IP = 0 + 16
+addi 2 16 2     IP = 16
 seti 1 4 1      r1 = 1
 seti 1 2 4      r4 = 1
 mulr 1 4 3      r3 = r1 * r4
 eqrr 3 5 3      r3 = r3 == r5
 addr 3 2 2      IP = 5 + r3
-addi 2 1 2      IP = 6 + 1
-addr 1 0 0      r0 =  r0 + r1
+addi 2 1 2      IP = 7
+addr 1 0 0      r0 = r0 + r1
 addi 4 1 4      r4 = r4 + 1
 gtrr 4 5 3      r3 = r4 > r5
 addr 2 3 2      IP = 10 + r3
@@ -14,7 +14,7 @@ addi 1 1 1      r1 = r1 + 1
 gtrr 1 5 3      r3 = r1 > r5
 addr 3 2 2      IP = 14 + r3
 seti 1 0 2      IP = 1
-mulr 2 2 2      IP = 16 * 16
+mulr 2 2 2      IP = 256
 addi 5 2 5      r5 = r5 + 2
 mulr 5 5 5      r5 = r5 * r5
 mulr 2 5 5      r5 = 19 * r5

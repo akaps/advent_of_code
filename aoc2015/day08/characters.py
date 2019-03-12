@@ -38,41 +38,37 @@ class Strings:
                 total += 1
         return total + 2
 
-    def count_diff(self, s_index):
-        return self.count_literals(s_index) - self.count_characters(s_index)
+    def character_diff(self):
+        total = 0
+        for s_index, _ in enumerate(self.strings):
+            total += self.count_literals(s_index) - self.count_characters(s_index)
+        return total
 
-    def encoded_diff(self, s_index):
-        return self.count_encoded(s_index) - self.count_literals(s_index)
+    def encoded_diff(self):
+        total = 0
+        for s_index, _ in enumerate(self.strings):
+            total += self.count_encoded(s_index) - self.count_literals(s_index)
+        return total
 
 SAMPLE = Strings('sample.txt')
 assert SAMPLE.count_literals(0) == 2
 assert SAMPLE.count_characters(0) == 0
-assert SAMPLE.count_diff(0) == 2
 
 assert SAMPLE.count_literals(1) == 5
 assert SAMPLE.count_characters(1) == 3
-assert SAMPLE.count_diff(1) == 2
 
 assert SAMPLE.count_literals(2) == 10
 assert SAMPLE.count_characters(2) == 7
-assert SAMPLE.count_diff(2) == 3
 
 assert SAMPLE.count_literals(3) == 6
 assert SAMPLE.count_characters(3) == 1
-assert SAMPLE.count_diff(3) == 5
 
 PROBLEM = Strings('input.txt')
-TOTAL = 0
-for index, _ in enumerate(PROBLEM.strings):
-    TOTAL += PROBLEM.count_diff(index)
-utils.pretty_print_answer(1, TOTAL)
+utils.pretty_print_answer(1, PROBLEM.character_diff())
 
 assert SAMPLE.count_encoded(0) == 6
 assert SAMPLE.count_encoded(1) == 9
 assert SAMPLE.count_encoded(2) == 16
 assert SAMPLE.count_encoded(3) == 11
 
-TOTAL = 0
-for index, _ in enumerate(PROBLEM.strings):
-    TOTAL += PROBLEM.encoded_diff(index)
-utils.pretty_print_answer(2, TOTAL)
+utils.pretty_print_answer(2, PROBLEM.encoded_diff())

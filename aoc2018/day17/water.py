@@ -43,9 +43,7 @@ class Buckets:
                     continue
                 if self.cells[row][col] == EMPTY:
                     print('waterfalling on col', col)
-                    res = self.waterfall(row, col)
-                    if res:
-                        next_spills.append(res)
+                    next_spills.append(self.waterfall(row, col))
                 else:
                     print('filling row', row)
                     next_spills.extend(self.fill_row(row, col))

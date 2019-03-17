@@ -39,10 +39,10 @@ class Buckets:
         while spills:
             spill_row, spill_col = spills.pop()
             if self.cells[spill_row][spill_col] == EMPTY:
-                print('waterfalling on col', spill_col)
+                print('waterfalling on', spill_row, spill_col)
                 spills.append(self.waterfall(spill_row, spill_col))
             elif spill_row + 1 < self.dims[ROW]:
-                print('filling row', spill_row)
+                print('filling row from', spill_row, spill_col)
                 spills.extend(self.fill_row(spill_row, spill_col))
 
     def fill_row(self, row, col):
@@ -61,7 +61,7 @@ class Buckets:
         return col
 
     def waterfall(self, row, col):
-        while row + 1 < len(self.cells) and self.cells[row + 1][col] == EMPTY:
+        while row + 1 < self.dims[ROW] and self.cells[row + 1][col] == EMPTY:
             self.cells[row][col] = RUNNING
             row += 1
         self.cells[row][col] = RUNNING

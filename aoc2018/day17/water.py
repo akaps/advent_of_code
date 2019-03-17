@@ -37,17 +37,13 @@ class Buckets:
     def pour(self):
         spills = [(0, 500 - self.bounds[COL][MIN])]
         while spills:
-            for row, col in spills:
-                next_spills = []
-                if row == self.dims[ROW] - 1:
-                    continue
-                if self.cells[row][col] == EMPTY:
-                    print('waterfalling on col', col)
-                    next_spills.append(self.waterfall(row, col))
-                else:
-                    print('filling row', row)
-                    next_spills.extend(self.fill_row(row, col))
-            spills = next_spills
+            spill_row, spill_col = spills.pop()
+            if self.cells[spill_row][spill_col] == EMPTY:
+                print('waterfalling on col', spill_col)
+                spills.append(self.waterfall(spill_row, spill_col))
+            elif spill_row + 1 < self.dims[ROW]:
+                print('filling row', spill_row)
+                spills.extend(self.fill_row(spill_row, spill_col))
 
     def fill_row(self, row, col):
         spills = []

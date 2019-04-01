@@ -1,5 +1,5 @@
 import re
-from complexvector import ComplexVector
+from complex_vector import ComplexVector
 
 def walk(moves):
     moves = re.split(', ', moves.strip())

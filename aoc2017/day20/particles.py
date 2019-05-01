@@ -56,6 +56,26 @@ def find_closest_to_origin(particles):
                 print('removing {p}, dist of {d}'.format(p=point.particle_id, d=point.distance()))
                 break
 
+def perform_collisions(particles):
+    all_diverging = False
+    while not all_diverging:
+        all_diverging = True
+        print(len(particles))
+        locations = {}
+        for particle in particles:
+            particle.update()
+            if particle.point not in locations:
+                locations[particle.point] = [particle]
+            else:
+                locations[particle.point].append(particle)
+            if not particle.is_diverging:
+                all_diverging = False
+        for particles_at_loc in locations.values():
+            if len(particles_at_loc) > 1:
+                print('collisions with points {p}'.format(p=particles_at_loc))
+                for part in particles_at_loc:
+                    particles.remove(part)
+
 a = (2, 3, -4)
 b = (0, 0, 0)
 c = (-1, -1, -1)
@@ -72,3 +92,9 @@ particles = parse_particles(file.readlines())
 file.close()
 find_closest_to_origin(particles)
 utils.pretty_print_answer(1, particles[0].particle_id)
+
+file = open('input.txt')
+particles = parse_particles(file.readlines())
+file.close()
+perform_collisions(particles)
+utils.pretty_print_answer(2, len(particles))

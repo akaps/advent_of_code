@@ -29,10 +29,12 @@ class Intcode:
             if next_instr == self.ADD:
                 ip_mod = 4
                 parameters = self.registers[instruction_pointer + 1: instruction_pointer + ip_mod]
-                self.registers[parameters[2]] = self.registers[parameters[0]] + self.registers[parameters[1]]
+                self.registers[parameters[2]] = (self.registers[parameters[0]]
+                                                 + self.registers[parameters[1]])
             elif next_instr == self.MULTIPLY:
                 ip_mod = 4
                 parameters = self.registers[instruction_pointer + 1: instruction_pointer + ip_mod]
-                self.registers[parameters[2]] = self.registers[parameters[0]] * self.registers[parameters[1]]
+                self.registers[parameters[2]] = (self.registers[parameters[0]]
+                                                 * self.registers[parameters[1]])
             instruction_pointer += ip_mod
         return self.registers[0]

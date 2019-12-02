@@ -34,6 +34,6 @@ assert calculate_log_fuel(14) == 2
 assert calculate_log_fuel(1969) == 966
 assert calculate_log_fuel(100756) == 50346
 
-mass_list = [int(x) for x in utils.read_lines('input.txt')]
-simple_fuel(mass_list)
-realistic_fuel(mass_list)
+MASS_LIST = [int(x) for x in utils.read_lines('input.txt')]
+simple_fuel(MASS_LIST)
+realistic_fuel(MASS_LIST)

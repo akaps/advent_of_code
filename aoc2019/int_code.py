@@ -25,16 +25,18 @@ class Intcode:
         instruction_pointer = 0
         while self.registers[instruction_pointer] != self.STOP:
             ip_mod = 1
-            next_instr = self.registers[instruction_pointer]
-            if next_instr == self.ADD:
+            opcode = self.registers[instruction_pointer]
+            if opcode == self.ADD:
                 ip_mod = 4
                 parameters = self.registers[instruction_pointer + 1: instruction_pointer + ip_mod]
                 self.registers[parameters[2]] = (self.registers[parameters[0]]
                                                  + self.registers[parameters[1]])
-            elif next_instr == self.MULTIPLY:
+            elif opcode == self.MULTIPLY:
                 ip_mod = 4
                 parameters = self.registers[instruction_pointer + 1: instruction_pointer + ip_mod]
                 self.registers[parameters[2]] = (self.registers[parameters[0]]
                                                  * self.registers[parameters[1]])
+            else:
+                assert False, 'unsupported opcode {opcode}'.format(opcode=opcode)
             instruction_pointer += ip_mod
         return self.registers[0]

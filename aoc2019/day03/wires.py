@@ -2,53 +2,52 @@ import re
 import utils
 
 DELIMETER = r','
-insersection_dists = [248, 367, 1112, 1948, 2228]
+INTERSECTION_DISTS = [248, 367, 1112, 1948, 2228]
 
 def generate_points(wire):
     intersections = {}
-    x = y = 0
+    row = col = 0
     points = []
-    steps = 0
+    current_steps = 0
     for instruction in wire:
-        direction, distance = instruction[:1], int(instruction[1:])
-        for _ in range(distance):
-            steps += 1
+        direction, current_distance = instruction[:1], int(instruction[1:])
+        for _ in range(current_distance):
+            current_steps += 1
             if direction == 'D':
-                y += 1
+                col += 1
             if direction == 'U':
-                y -= 1
+                col -= 1
             if direction == 'R':
-                x += 1
+                row += 1
             if direction == 'L':
-                x -= 1
-            distance = utils.manhattan_distance((x, y), (0, 0))
-            if distance in insersection_dists:
-                intersections[distance] = steps
-            points.append((x, y))
+                row -= 1
+            current_distance = utils.manhattan_distance((row, col), (0, 0))
+            if current_distance in INTERSECTION_DISTS:
+                intersections[current_distance] = current_steps
+            points.append((row, col))
     return points, intersections
 
-input = utils.read_lines('input.txt')
-wire_a = re.split(DELIMETER, input[0])
-wire_b = re.split(DELIMETER, input[1])
+INPUT = utils.read_lines('input.txt')
+WIRE_A = re.split(DELIMETER, INPUT[0])
+WIRE_B = re.split(DELIMETER, INPUT[1])
 
-points_a, intersections_a = generate_points(wire_a)
+POINTS_A, INTERSECTIONS_A = generate_points(WIRE_A)
 print('wire a done')
-points_b, intersections_b = generate_points(wire_b)
+POINTS_B, INTERSECTIONS_B = generate_points(WIRE_B)
 print('wire b done')
 
-location = None #very big number
-shortest_trip = -1
-for point in points_a:
-    #print(point)
-    if point in points_b:
+LOCATION = None
+SHORTEST_TRIP = -1
+for point in POINTS_A:
+    if point in POINTS_B:
         distance = utils.manhattan_distance(point, (0, 0))
         print('match! {pt} {distance}'.format(pt=point, distance=distance))
-        steps = points_a.index(point) + 1 + points_b.index(point) + 1
+        steps = POINTS_A.index(point) + 1 + POINTS_B.index(point) + 1
         print(steps)
-        if shortest_trip < 0 or steps < shortest_trip:
-            shortest_trip = steps
-        if not location or distance < location:
-            location = distance
+        if SHORTEST_TRIP < 0 or steps < SHORTEST_TRIP:
+            SHORTEST_TRIP = steps
+        if not LOCATION or distance < LOCATION:
+            LOCATION = distance
 
-utils.pretty_print_answer(1, location)
-utils.pretty_print_answer(2, shortest_trip)
+utils.pretty_print_answer(1, LOCATION)
+utils.pretty_print_answer(2, SHORTEST_TRIP)

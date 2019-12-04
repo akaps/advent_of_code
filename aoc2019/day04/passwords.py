@@ -12,17 +12,17 @@ def is_valid_password(num):
     return has_pair and always_increasing
 
 def strictly_2_matches(num):
-    has_strictly_2 = False
     assert len(num) == 6
+    has_strictly_2 = False
     if num[0] == num[1] and num[1] != num [2]:
         has_strictly_2 = True
     for index in range(1, 4):
-        if num[index - 1] != num[index] and num[index] == num[index + 1] and num[index] != num[index + 2]:
+        if (num[index - 1] != num[index]
+                and num[index] == num[index + 1]
+                and num[index] != num[index + 2]):
             has_strictly_2 = True
     if num[4] != num[3] and num[4] == num[5]:
         has_strictly_2 = True
-    # if has_strictly_2:
-    #     print(num)
     return has_strictly_2
 
 assert is_valid_password('111111')
@@ -35,20 +35,20 @@ assert strictly_2_matches('111122')
 
 assert not strictly_2_matches('578889')
 
-#125730-579381
-input_range = range(125730, 579381)
-count_valid = 0
-valid = []
+#INPUT: 125730-579381
+INPUT_RANGE = range(125730, 579381)
+COUNT_VALID = 0
+VALID = []
 
-for i in input_range:
+for i in INPUT_RANGE:
     if is_valid_password(str(i)):
-        count_valid += 1
-        valid.append(str(i))
+        COUNT_VALID += 1
+        VALID.append(str(i))
 
-repeating_count = 0
-for value in valid:
+REPEATING_COUNT = 0
+for value in VALID:
     if strictly_2_matches(value):
-        repeating_count += 1
+        REPEATING_COUNT += 1
 
-utils.pretty_print_answer(1, count_valid)
-utils.pretty_print_answer(2, repeating_count)
+utils.pretty_print_answer(1, COUNT_VALID)
+utils.pretty_print_answer(2, REPEATING_COUNT)

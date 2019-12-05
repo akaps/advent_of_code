@@ -5,13 +5,17 @@ def find_noun_verb(computer, target):
     for noun in range(100):
         for verb in range(100):
             COMPUTER.reinitialize()
-            if computer.run_program(noun, verb) == target:
+            COMPUTER.registers[1] = noun
+            COMPUTER.registers[2] = verb
+            if computer.run_program() == target:
                 return 100 * noun + verb
     assert False, 'Unreachable'
     return -1
 
 COMPUTER = Intcode('input.txt')
-ANSWER = COMPUTER.run_program(12, 2)
+COMPUTER.registers[1] = 12
+COMPUTER.registers[2] = 2
+ANSWER = COMPUTER.run_program()
 assert ANSWER == 2692315
 utils.pretty_print_answer(1, ANSWER)
 

@@ -10,6 +10,10 @@ class IntCode:
     MULTIPLY = 2
     SAVE_INPUT = 3
     OUTPUT = 4
+    JUMP_IF_TRUE = 5
+    JUMP_IF_FALSE = 6
+    LESS_THAN = 7
+    EQUALS = 8
     STOP = 99
 
     def __init__(self, input_file):
@@ -17,10 +21,10 @@ class IntCode:
         self.initial_state = [int(x) for x in re.split(r',', file.readline().strip())]
         file.close()
         self.reinitialize()
-        self.output = []
 
     def reinitialize(self):
         self.registers = [x for x in self.initial_state]
+        self.output = []
 
     def generate_modes(self, instruction):
         modes = [int(x) for x in '{modes:03d}'.format(modes=(instruction // 100))]
@@ -47,7 +51,7 @@ class IntCode:
     def run_program(self, inputs=[]):
         instruction_pointer = 0
         while self.registers[instruction_pointer] != self.STOP:
-            ip_mod = 1
+            ip_mod = 0
             instruction = self.registers[instruction_pointer]
             opcode = instruction % 100
             modes = self.generate_modes(instruction)
@@ -70,6 +74,36 @@ class IntCode:
                 immediate, _, _ = modes
                 parameter = self.registers[instruction_pointer + 1]
                 self.output.append(self.parse_parameter(parameter, immediate))
+            elif opcode == self.JUMP_IF_TRUE:
+                non_zero, jump = self.registers[instruction_pointer + 1: instruction_pointer + 3]
+                nz_mode, jmp_mode, _ = modes
+                if self.parse_parameter(non_zero, nz_mode):
+                    instruction_pointer = self.parse_parameter(jump, jmp_mode)
+                else:
+                    ip_mod = 3
+            elif opcode == self.JUMP_IF_FALSE:
+                non_zero, jump = self.registers[instruction_pointer + 1: instruction_pointer + 3]
+                nz_mode, jmp_mode, _ = modes
+                if self.parse_parameter(non_zero, nz_mode):
+                    ip_mod = 3
+                else:
+                    instruction_pointer = self.parse_parameter(jump, jmp_mode)
+            elif opcode == self.LESS_THAN:
+                left, right, store = self.registers[
+                    instruction_pointer + 1: instruction_pointer + 4]
+                left_mode, right_mode, _ = modes
+                self.registers[store] = 1 if (
+                    self.parse_parameter(left, left_mode)
+                    < self.parse_parameter(right, right_mode)) else 0
+                ip_mod = 4
+            elif opcode == self.EQUALS:
+                left, right, store = self.registers[
+                    instruction_pointer + 1: instruction_pointer + 4]
+                left_mode, right_mode, _ = modes
+                self.registers[store] = 1 if (
+                    self.parse_parameter(left, left_mode)
+                    == self.parse_parameter(right, right_mode)) else 0
+                ip_mod = 4
             else:
                 assert False, 'unsupported opcode {opcode} at position {pos}'.format(
                     opcode=opcode,

@@ -26,7 +26,6 @@ class Constellation:
         return total
 
 SAMPLE = Constellation('sample.txt')
-print(SAMPLE.orbits)
 DISTANCE = SAMPLE.total_distance()
 assert DISTANCE == 42
 

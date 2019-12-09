@@ -10,6 +10,11 @@ class IntCode:
     NOUN = 1
     VERB = 2
 
+    #parameter modes
+    ADDRESS = 0
+    IMMEDIATE = 1
+    RELATIVE = 2
+
     #opcodes
     ADD = 1
     MULTIPLY = 2
@@ -37,13 +42,13 @@ class IntCode:
         self.relative_base = 0
 
     def parse_parameter(self, parameter, mode):
-        if mode == 0:
+        if mode == self.ADDRESS:
             if parameter not in self.registers:
                 self.registers[parameter] = 0
             return self.registers[parameter]
-        if mode == 1:
+        if mode == self.IMMEDIATE:
             return parameter
-        if mode == 2:
+        if mode == self.RELATIVE:
             adjusted = self.relative_base + parameter
             if adjusted not in self.registers:
                 self.registers[adjusted] = 0
@@ -56,24 +61,30 @@ class IntCode:
             return [self.registers[self.instruction_pointer + i] for i in range(start, end)]
         return self.registers[self.instruction_pointer + start]
 
+    def store(self, store_pos, store_mode, store_val):
+        assert store_mode != self.IMMEDIATE, 'cannot save to an immediate'
+        if store_mode == 0:
+            self.registers[store_pos] = store_val
+        else:
+            self.registers[self.relative_base + store_pos] = store_val
+
     def add(self, modes):
         left, right, store = self.get_parameters(1, 4)
-        left_mode, right_mode, _ = modes
-        self.registers[store] = (self.parse_parameter(left, left_mode)
-                                 + self.parse_parameter(right, right_mode))
+        left_mode, right_mode, store_mode = modes
+        self.store(store, store_mode, (self.parse_parameter(left, left_mode)
+                                       + self.parse_parameter(right, right_mode)))
         return 4
 
     def multiply(self, modes):
         left, right, store = self.get_parameters(1, 4)
-        left_mode, right_mode, _ = modes
-        self.registers[store] = (self.parse_parameter(left, left_mode)
-                                 * self.parse_parameter(right, right_mode))
+        left_mode, right_mode, store_mode = modes
+        self.store(store, store_mode, (self.parse_parameter(left, left_mode)
+                                       * self.parse_parameter(right, right_mode)))
         return 4
 
     def save_input(self, modes):
-        assert 1 not in modes, 'cannot save to an immediate'
         store = self.get_parameters(1)
-        self.registers[store] = self.inputs[0]
+        self.store(store, modes[0], self.inputs[0])
         self.inputs.pop(0)
         return 2
 
@@ -101,18 +112,18 @@ class IntCode:
 
     def less_than(self, modes):
         left, right, store = self.get_parameters(1, 4)
-        left_mode, right_mode, _ = modes
-        self.registers[store] = 1 if (
+        left_mode, right_mode, store_mode = modes
+        self.store(store, store_mode, 1 if (
             self.parse_parameter(left, left_mode)
-            < self.parse_parameter(right, right_mode)) else 0
+            < self.parse_parameter(right, right_mode)) else 0)
         return 4
 
     def equals(self, modes):
         left, right, store = self.get_parameters(1, 4)
-        left_mode, right_mode, _ = modes
-        self.registers[store] = 1 if (
+        left_mode, right_mode, store_mode = modes
+        self.store(store, store_mode, 1 if (
             self.parse_parameter(left, left_mode)
-            == self.parse_parameter(right, right_mode)) else 0
+            == self.parse_parameter(right, right_mode)) else 0)
         return 4
 
     def adjust_relative_base(self, modes):

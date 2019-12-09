@@ -1,5 +1,10 @@
 import re
 
+def generate_modes(instruction):
+    modes = [int(x) for x in '{modes:03d}'.format(modes=(instruction // 100))]
+    modes.reverse()
+    return modes
+
 class IntCode:
     #address references
     NOUN = 1
@@ -14,6 +19,7 @@ class IntCode:
     JUMP_IF_FALSE = 6
     LESS_THAN = 7
     EQUALS = 8
+    ADJUST_REL_BASE = 9
     STOP = 99
 
     def __init__(self, input_file):
@@ -21,92 +27,132 @@ class IntCode:
         self.initial_state = [int(x) for x in re.split(r',', file.readline().strip())]
         file.close()
         self.reinitialize()
+        self.inputs = []
+        self.instruction_pointer = 0
 
     def reinitialize(self):
+        self.instruction_pointer = 0
         self.registers = [x for x in self.initial_state]
         self.output = []
+        self.relative_base = 0
 
-    def generate_modes(self, instruction):
-        modes = [int(x) for x in '{modes:03d}'.format(modes=(instruction // 100))]
-        modes.reverse()
-        return modes
+    def extend(self, parameter):
+        self.registers.extend([0] * (parameter - len(self.registers) + 1))
 
     def parse_parameter(self, parameter, mode):
+        if mode == 0:
+            if parameter >= len(self.registers):
+                self.extend(parameter)
+            return self.registers[parameter]
         if mode == 1:
             return parameter
-        return self.registers[parameter]
+        if mode == 2:
+            adjusted = self.relative_base + parameter
+            if adjusted >= len(self.registers):
+                self.extend(adjusted)
+            return self.registers[adjusted]
+        assert False, 'Unexpected mode {mode}'.format(mode=mode)
+        return -1
 
-    def add(self, instruction_pointer, modes):
-        left, right, store = self.registers[instruction_pointer + 1: instruction_pointer + 4]
+    def get_parameters(self, start, end=None):
+        if end:
+            return self.registers[self.instruction_pointer + start : self.instruction_pointer + end]
+        return self.registers[self.instruction_pointer + start]
+
+    def add(self, modes):
+        left, right, store = self.get_parameters(1, 4)
         left_mode, right_mode, _ = modes
         self.registers[store] = (self.parse_parameter(left, left_mode)
                                  + self.parse_parameter(right, right_mode))
+        return 4
 
-    def multiply(self, instruction_pointer, modes):
-        left, right, store = self.registers[instruction_pointer + 1: instruction_pointer + 4]
+    def multiply(self, modes):
+        left, right, store =self.get_parameters(1, 4)
         left_mode, right_mode, _ = modes
         self.registers[store] = (self.parse_parameter(left, left_mode)
                                  * self.parse_parameter(right, right_mode))
+        return 4
 
-    def run_program(self, inputs=[]):
-        instruction_pointer = 0
-        while self.registers[instruction_pointer] != self.STOP:
+    def save_input(self, modes):
+        assert 1 not in modes, 'cannot save to an immediate'
+        parameter = self.get_parameters(1)
+        self.registers[parameter] = self.inputs[0]
+        self.inputs.pop(0)
+        return 2
+
+    def write_output(self, modes):
+        immediate, _, _ = modes
+        parameter = self.get_parameters(1)
+        self.output.append(self.parse_parameter(parameter, immediate))
+        return 2
+
+    def jump_if_true(self, modes):
+        non_zero, jump = self.get_parameters(1, 3)
+        nz_mode, jmp_mode, _ = modes
+        if self.parse_parameter(non_zero, nz_mode):
+            self.instruction_pointer = self.parse_parameter(jump, jmp_mode)
+            return 0
+        return 3
+
+    def jump_if_false(self, modes):
+        non_zero, jump = self.get_parameters(1, 3)
+        nz_mode, jmp_mode, _ = modes
+        if self.parse_parameter(non_zero, nz_mode):
+            return 3
+        self.instruction_pointer = self.parse_parameter(jump, jmp_mode)
+        return 0
+
+    def less_than(self, modes):
+        left, right, store = self.get_parameters(1, 4)
+        left_mode, right_mode, _ = modes
+        self.registers[store] = 1 if (
+            self.parse_parameter(left, left_mode)
+            < self.parse_parameter(right, right_mode)) else 0
+        return 4
+
+    def equals(self, modes):
+        left, right, store = self.get_parameters(1, 4)
+        left_mode, right_mode, store_mode = modes
+        self.registers[self.parse_parameter(store, store_mode)] = 1 if (
+            self.parse_parameter(left, left_mode)
+            == self.parse_parameter(right, right_mode)) else 0
+        return 4
+
+    def adjust_relative_base(self, modes):
+        parameter = self.get_parameters(1)
+        mode, _, _ = modes
+        self.relative_base += self.parse_parameter(parameter, mode)
+        return 2
+
+    def run_program(self, inputs=None):
+        if inputs:
+            self.inputs = inputs
+        while self.registers[self.instruction_pointer] != self.STOP:
             ip_mod = 0
-            instruction = self.registers[instruction_pointer]
+            instruction = self.registers[self.instruction_pointer]
             opcode = instruction % 100
-            modes = self.generate_modes(instruction)
+            modes = generate_modes(instruction)
             if opcode == self.ADD:
-                ip_mod = 4
-                self.add(instruction_pointer, modes)
+                ip_mod = self.add(modes)
             elif opcode == self.MULTIPLY:
-                ip_mod = 4
-                self.multiply(instruction_pointer, modes)
+                ip_mod = self.multiply(modes)
             elif opcode == self.SAVE_INPUT:
-                assert 1 not in modes, 'cannot save to an immediate {instruction}'.format(
-                    instruction=(opcode, modes)
-                )
-                ip_mod = 2
-                parameter = self.registers[instruction_pointer + 1]
-                self.registers[parameter] = inputs[0]
-                inputs.pop(0)
+                ip_mod = self.save_input(modes)
             elif opcode == self.OUTPUT:
-                ip_mod = 2
-                immediate, _, _ = modes
-                parameter = self.registers[instruction_pointer + 1]
-                self.output.append(self.parse_parameter(parameter, immediate))
+                ip_mod = self.write_output(modes)
             elif opcode == self.JUMP_IF_TRUE:
-                non_zero, jump = self.registers[instruction_pointer + 1: instruction_pointer + 3]
-                nz_mode, jmp_mode, _ = modes
-                if self.parse_parameter(non_zero, nz_mode):
-                    instruction_pointer = self.parse_parameter(jump, jmp_mode)
-                else:
-                    ip_mod = 3
+                ip_mod = instruction_pointer = self.jump_if_true(modes)
             elif opcode == self.JUMP_IF_FALSE:
-                non_zero, jump = self.registers[instruction_pointer + 1: instruction_pointer + 3]
-                nz_mode, jmp_mode, _ = modes
-                if self.parse_parameter(non_zero, nz_mode):
-                    ip_mod = 3
-                else:
-                    instruction_pointer = self.parse_parameter(jump, jmp_mode)
+                ip_mod = instruction_pointer = self.jump_if_false(modes)
             elif opcode == self.LESS_THAN:
-                left, right, store = self.registers[
-                    instruction_pointer + 1: instruction_pointer + 4]
-                left_mode, right_mode, _ = modes
-                self.registers[store] = 1 if (
-                    self.parse_parameter(left, left_mode)
-                    < self.parse_parameter(right, right_mode)) else 0
-                ip_mod = 4
+                ip_mod = self.less_than(modes)
             elif opcode == self.EQUALS:
-                left, right, store = self.registers[
-                    instruction_pointer + 1: instruction_pointer + 4]
-                left_mode, right_mode, _ = modes
-                self.registers[store] = 1 if (
-                    self.parse_parameter(left, left_mode)
-                    == self.parse_parameter(right, right_mode)) else 0
-                ip_mod = 4
+                ip_mod = self.equals(modes)
+            elif opcode == self.ADJUST_REL_BASE:
+                ip_mod = self.adjust_relative_base(modes)
             else:
                 assert False, 'unsupported opcode {opcode} at position {pos}'.format(
                     opcode=opcode,
                     pos=instruction_pointer)
-            instruction_pointer += ip_mod
+            self.instruction_pointer += ip_mod
         return self.output

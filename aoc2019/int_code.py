@@ -112,8 +112,8 @@ class IntCode:
 
     def equals(self, modes):
         left, right, store = self.get_parameters(1, 4)
-        left_mode, right_mode, store_mode = modes
-        self.registers[self.parse_parameter(store, store_mode)] = 1 if (
+        left_mode, right_mode, _ = modes
+        self.registers[store] = 1 if (
             self.parse_parameter(left, left_mode)
             == self.parse_parameter(right, right_mode)) else 0
         return 4

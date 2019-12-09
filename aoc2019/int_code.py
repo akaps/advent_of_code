@@ -32,31 +32,28 @@ class IntCode:
 
     def reinitialize(self):
         self.instruction_pointer = 0
-        self.registers = [x for x in self.initial_state]
+        self.registers = {index: x for index, x in enumerate(self.initial_state)}
         self.output = []
         self.relative_base = 0
 
-    def extend(self, parameter):
-        self.registers.extend([0] * (parameter - len(self.registers) + 1))
-
     def parse_parameter(self, parameter, mode):
         if mode == 0:
-            if parameter >= len(self.registers):
-                self.extend(parameter)
+            if parameter not in self.registers:
+                self.registers[parameter] = 0
             return self.registers[parameter]
         if mode == 1:
             return parameter
         if mode == 2:
             adjusted = self.relative_base + parameter
-            if adjusted >= len(self.registers):
-                self.extend(adjusted)
+            if adjusted not in self.registers:
+                self.registers[adjusted] = 0
             return self.registers[adjusted]
         assert False, 'Unexpected mode {mode}'.format(mode=mode)
         return -1
 
     def get_parameters(self, start, end=None):
         if end:
-            return self.registers[self.instruction_pointer + start : self.instruction_pointer + end]
+            return [self.registers[self.instruction_pointer + i] for i in range(start, end)]
         return self.registers[self.instruction_pointer + start]
 
     def add(self, modes):
@@ -67,7 +64,7 @@ class IntCode:
         return 4
 
     def multiply(self, modes):
-        left, right, store =self.get_parameters(1, 4)
+        left, right, store = self.get_parameters(1, 4)
         left_mode, right_mode, _ = modes
         self.registers[store] = (self.parse_parameter(left, left_mode)
                                  * self.parse_parameter(right, right_mode))
@@ -75,8 +72,8 @@ class IntCode:
 
     def save_input(self, modes):
         assert 1 not in modes, 'cannot save to an immediate'
-        parameter = self.get_parameters(1)
-        self.registers[parameter] = self.inputs[0]
+        store = self.get_parameters(1)
+        self.registers[store] = self.inputs[0]
         self.inputs.pop(0)
         return 2
 

@@ -30,3 +30,8 @@ PROBLEM = IntCode('input.txt')
 RESULT = PROBLEM.run_program([1])
 assert len(RESULT) == 1, 'opcodes failed according to results {res}'.format(res=RESULT)
 utils.pretty_print_answer(1, RESULT[0])
+
+PROBLEM.reinitialize()
+RESULT = PROBLEM.run_program([2])
+assert len(RESULT) == 1, 'unexpected additional output {res}'.format(res=RESULT)
+utils.pretty_print_answer(2, RESULT[0])

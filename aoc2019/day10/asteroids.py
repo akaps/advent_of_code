@@ -23,7 +23,6 @@ class Asteroids:
             for x, val in enumerate(row):
                 if val == ASTEROID:
                     self.asteroids.append((x, y))
-        print(self.asteroids)
 
     def most_visible_asteroids(self):
         most_seen = 0
@@ -71,5 +70,5 @@ assert MOST == 210
 
 PROBLEM = Asteroids('input.txt')
 POS, MOST = PROBLEM.most_visible_asteroids()
-print(POS)
+assert MOST == 347
 utils.pretty_print_answer(1, MOST)

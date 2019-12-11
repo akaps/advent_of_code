@@ -3,6 +3,9 @@ import utils
 CENTER = 'COM'
 DELIMETER = ')'
 
+YOU = 'YOU'
+SAN = 'SAN'
+
 class Star:
     def __init__(self, data):
         self.data = data
@@ -27,12 +30,15 @@ class Constellation:
     def initialize_orbits(self, orbit_pairs):
         for pair in orbit_pairs:
             center, orbiter = pair.split(DELIMETER)
-            if center not in self.stars:
-                self.stars[center] = Star(center)
-            self.stars[center].add_child(orbiter)
-            if orbiter not in self.stars:
-                self.stars[orbiter] = Star(orbiter)
-            self.stars[orbiter].parent = center
+            self.add_orbit(center, orbiter)
+
+    def add_orbit(self, center, orbiter):
+        if center not in self.stars:
+            self.stars[center] = Star(center)
+        self.stars[center].add_child(orbiter)
+        if orbiter not in self.stars:
+            self.stars[orbiter] = Star(orbiter)
+        self.stars[orbiter].parent = center
 
     def total_distance(self):
         return self._total_distance(CENTER, 0)
@@ -43,9 +49,38 @@ class Constellation:
             total += self._total_distance(child, current_depth + 1)
         return total
 
+    def _parents_of(self, current):
+        if current == CENTER:
+            return []
+        parent = self.stars[current].parent
+        parents = self._parents_of(parent)
+        parents.append(parent)
+        return parents
+
+    def distance_between(self, start, end):
+        start_parents = self._parents_of(start)
+        current = self.stars[end].parent
+        count = 0
+        while current not in start_parents:
+            current = self.stars[current].parent
+            count += 1
+        count += len(start_parents) - start_parents.index(current) - 1
+        return count
+
 SAMPLE = Constellation('sample.txt')
 DISTANCE = SAMPLE.total_distance()
 assert DISTANCE == 42
 
 PROBLEM = Constellation('input.txt')
-utils.pretty_print_answer(1, PROBLEM.total_distance())
+DISTANCE = PROBLEM.total_distance()
+assert DISTANCE == 140608
+utils.pretty_print_answer(1, DISTANCE)
+
+SAMPLE.add_orbit('K', YOU)
+SAMPLE.add_orbit('I', SAN)
+DISTANCE = SAMPLE.distance_between(YOU, SAN)
+assert DISTANCE == 4
+
+DISTANCE = PROBLEM.distance_between(YOU, SAN)
+assert DISTANCE == 337
+utils.pretty_print_answer(2, DISTANCE)

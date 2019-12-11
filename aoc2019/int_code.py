@@ -5,6 +5,9 @@ def generate_modes(instruction):
     modes.reverse()
     return modes
 
+class MissingInputError(Exception):
+    pass
+
 class IntCode:
     #address references
     NOUN = 1
@@ -84,8 +87,9 @@ class IntCode:
 
     def save_input(self, modes):
         store = self.get_parameters(1)
-        self.store(store, modes[0], self.inputs[0])
-        self.inputs.pop(0)
+        if not self.inputs:
+            raise MissingInputError()
+        self.store(store, modes[0], self.inputs.pop(0))
         return 2
 
     def write_output(self, modes):

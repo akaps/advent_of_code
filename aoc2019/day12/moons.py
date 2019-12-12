@@ -1,4 +1,5 @@
 import re
+import math
 import utils
 
 X = 'x'
@@ -10,8 +11,8 @@ def process_line(line):
     return [int(x) for x in m.groups()]
 
 def format_coordinate(coordinate):
-    x, y, z = coordinate
-    return '<x={x}, y={y}, z={z}>'.format(x=x, y=y, z=z)
+    x_coord, y_coord, z_coord = coordinate.values()
+    return '<x={x}, y={y}, z={z}>'.format(x=x_coord, y=y_coord, z=z_coord)
 
 class Moon:
     def __init__(self, x, y, z):
@@ -45,7 +46,12 @@ class Moon:
         return self.potential_energy() * self.kinetic_energy()
 
     def __repr__(self):
-        return 'pos={pos}, vel ={vel}'.format(pos=format_coordinate(self.position), vel=format_coordinate(self.velocity))
+        return 'pos={pos}, vel ={vel}'.format(
+            pos=format_coordinate(self.position),
+            vel=format_coordinate(self.velocity))
+
+    def axis_data(self, axis):
+        return 'pos={pos}, vel={vel}'.format(pos=self.position[axis], vel=self.velocity[axis])
 
 class Moons:
     def __init__(self, input_file):
@@ -73,6 +79,33 @@ class Moons:
             total += moon.total_energy()
         return total
 
+    def repeats_axis(self, axis):
+        steps = 0
+        previous = []
+        current = ','.join([self.moons[i].axis_data(axis) for i in range(4)])
+        while current not in previous:
+            previous.append(current)
+            self.update()
+            current = ','.join([self.moons[i].axis_data(axis) for i in range(4)])
+            steps += 1
+            if steps % 10000 == 0:
+                print(steps)
+        return steps
+
+def steps_til_repeat(input_file):
+    moons = Moons(input_file)
+    x_repeat = moons.repeats_axis(X)
+    print('x axis repeats at {repeat}'.format(repeat=x_repeat))
+    moons = Moons(input_file)
+    y_repeat = moons.repeats_axis(Y)
+    print('y axis repeats at {repeat}'.format(repeat=y_repeat))
+    moons = Moons(input_file)
+    z_repeat = moons.repeats_axis(Z)
+    print('z axis repeats at {repeat}'.format(repeat=z_repeat))
+    lcm_xy = (x_repeat * y_repeat) // math.gcd(x_repeat, y_repeat)
+    lcm = (lcm_xy * z_repeat) // math.gcd(lcm_xy, z_repeat)
+    return lcm
+
 SAMPLE1 = Moons('sample1.txt')
 for _ in range(10):
     SAMPLE1.update()
@@ -81,4 +114,19 @@ assert SAMPLE1.total_energy() == 179
 PROBLEM = Moons('input.txt')
 for _ in range(1000):
     PROBLEM.update()
-utils.pretty_print_answer(1, PROBLEM.total_energy())
+ANSWER = PROBLEM.total_energy()
+assert ANSWER == 9958
+utils.pretty_print_answer(1, ANSWER)
+
+print('testing steps for sample 1')
+STEPS = steps_til_repeat('sample1.txt')
+assert STEPS == 2772
+
+print('testing steps for sample2')
+STEPS = steps_til_repeat('sample2.txt')
+assert STEPS == 4686774924
+
+print('calculating solution for part 2')
+STEPS = steps_til_repeat('input.txt')
+#assert STEPS ==
+utils.pretty_print_answer(2, STEPS)

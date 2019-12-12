@@ -51,7 +51,7 @@ class Moon:
             vel=format_coordinate(self.velocity))
 
     def axis_data(self, axis):
-        return 'pos={pos}, vel={vel}'.format(pos=self.position[axis], vel=self.velocity[axis])
+        return self.position[axis], self.velocity[axis]
 
 class Moons:
     def __init__(self, input_file):
@@ -81,15 +81,67 @@ class Moons:
 
     def repeats_axis(self, axis):
         steps = 0
-        previous = []
-        current = ','.join([self.moons[i].axis_data(axis) for i in range(4)])
-        while current not in previous:
-            previous.append(current)
+        previous = {}
+        pos1, vel1 = self.moons[0].axis_data(axis)
+        pos2, vel2 = self.moons[1].axis_data(axis)
+        pos3, vel3 = self.moons[2].axis_data(axis)
+        pos4, vel4 = self.moons[3].axis_data(axis)
+        found = False
+        while not found:
+            if pos1 in previous:
+                if vel1 in previous[pos1]:
+                    if pos2 in previous[pos1][vel1]:
+                        if vel2 in previous[pos1][vel1][pos2]:
+                            if pos3 in previous[pos1][vel1][pos2][vel2]:
+                                if vel3 in previous[pos1][vel1][pos2][vel2][pos3]:
+                                    if pos4 in previous[pos1][vel1][pos2][vel2][pos3][vel3]:
+                                        if vel4 in previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4]:
+                                            return steps
+                                        else:
+                                            previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4].append(vel4)
+                                    else:
+                                        previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+                                else:
+                                    previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                                    previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+                            else:
+                                previous[pos1][vel1][pos2][vel2][pos3] = {}
+                                previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                                previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+                        else:
+                            previous[pos1][vel1][pos2][vel2] = {}
+                            previous[pos1][vel1][pos2][vel2][pos3] = {}
+                            previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                            previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+                    else:
+                        previous[pos1][vel1][pos2] = {}
+                        previous[pos1][vel1][pos2][vel2] = {}
+                        previous[pos1][vel1][pos2][vel2][pos3] = {}
+                        previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                        previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+                else:
+                    previous[pos1][vel1] = {}
+                    previous[pos1][vel1][pos2] = {}
+                    previous[pos1][vel1][pos2][vel2] = {}
+                    previous[pos1][vel1][pos2][vel2][pos3] = {}
+                    previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                    previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
+            else:
+                previous[pos1] = {}
+                previous[pos1][vel1] = {}
+                previous[pos1][vel1][pos2] = {}
+                previous[pos1][vel1][pos2][vel2] = {}
+                previous[pos1][vel1][pos2][vel2][pos3] = {}
+                previous[pos1][vel1][pos2][vel2][pos3][vel3] = {}
+                previous[pos1][vel1][pos2][vel2][pos3][vel3][pos4] = [vel4]
             self.update()
-            current = ','.join([self.moons[i].axis_data(axis) for i in range(4)])
+            pos1, vel1 = self.moons[0].axis_data(axis)
+            pos2, vel2 = self.moons[1].axis_data(axis)
+            pos3, vel3 = self.moons[2].axis_data(axis)
+            pos4, vel4 = self.moons[3].axis_data(axis)
             steps += 1
-            if steps % 10000 == 0:
-                print(steps)
+            if steps % 100000 == 0:
+                print('still calculating... finished {steps} steps'.format(steps=steps))
         return steps
 
 def steps_til_repeat(input_file):

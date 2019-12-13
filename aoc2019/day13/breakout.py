@@ -30,7 +30,7 @@ class Breakout:
         self.tiles = {}
         self.model = IntCode(input_file)
         self.score = 0
-        self.ball_pos_prev = None
+        self.moved = False
         self.ball_pos_curr = None
         self.paddle_pos = None
 
@@ -41,12 +41,12 @@ class Breakout:
             if tile == HORIZ_PADDLE:
                 self.paddle_pos = (left_right, up_down)
             elif tile == BALL:
-                self.ball_pos_prev = self.ball_pos_curr
                 self.ball_pos_curr = (left_right, up_down)
             self.tiles[(left_right, up_down)] = tile
 
     def generate_next_move(self):
-        if not self.ball_pos_prev:
+        if not self.moved:
+            self.moved = True
             return NEUTRAL
         if self.paddle_pos > self.ball_pos_curr:
             return LEFT

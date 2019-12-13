@@ -73,7 +73,6 @@ class Breakout:
                     result = self.model.output
                     self.model.output = []
                     self.update_tiles(result)
-        result = self.model.run_program()
         self.update_tiles(result)
 
     def update_tiles(self, results):

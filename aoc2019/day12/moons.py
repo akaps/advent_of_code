@@ -180,5 +180,5 @@ assert STEPS == 4686774924
 
 print('calculating solution for part 2')
 STEPS = steps_til_repeat('input.txt')
-#assert STEPS ==
+assert STEPS == 318382803780324
 utils.pretty_print_answer(2, STEPS)

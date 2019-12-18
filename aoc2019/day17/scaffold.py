@@ -8,20 +8,30 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
+def generate_grid(char_map):
+    grid = []
+    row = []
+    for val in [chr(x) for x in char_map]:
+        if val != '\n':
+            row.append(val)
+        elif row:
+            grid.append(row)
+            row = []
+    return grid
+
+def pretty_print_grid(grid):
+    result = []
+    for row in grid:
+        row_result = []
+        for val in row:
+            row_result.append(val)
+        result.append(''.join(row_result))
+    print('\n'.join(result))
+
 class Scaffold:
     def __init__(self, input_file):
         self.computer = IntCode(input_file)
-        self.generate_map()
-
-    def generate_map(self):
-        self.map = []
-        row = []
-        for val in [chr(x) for x in self.computer.run_program()]:
-            if val != '\n':
-                row.append(val)
-            elif row:
-                self.map.append(row)
-                row = []
+        self.map = generate_grid(self.computer.run_program())
 
     def in_bounds(self, x_index, y_index):
         return (0 <= y_index < len(self.map)
@@ -44,15 +54,23 @@ class Scaffold:
                     total += y_index * x_index
         return total
 
-    def __repr__(self):
-        result = []
-        for row in self.map:
-            row_result = []
-            for val in row:
-                row_result.append(val)
-            result.append(''.join(row_result))
-        return '\n'.join(result)
-
 PROBLEM = Scaffold('input.txt')
-print(PROBLEM)
-utils.pretty_print_answer(1, PROBLEM.find_intersections())
+ANSWER = PROBLEM.find_intersections()
+assert ANSWER == 4408
+utils.pretty_print_answer(1, ANSWER)
+
+#waking up robot
+PROBLEM.computer.reinitialize()
+assert PROBLEM.computer.registers[0] == 1
+PROBLEM.computer.registers[0] = 2
+
+#answers from robot_program.txt
+MAIN = 'C,B,B,C,A,C,C,A,B,A\n'
+SUBROUTINE_A = 'R,8,L,8,L,8,R,8,R,10\n'
+SUBROUTINE_B = 'R,12,L,8,R,10\n'
+SUBROUTINE_C = 'R,8,L,12,R,8\n'
+CONTINUOUS_MODE = 'n\n'
+INPUT = MAIN + SUBROUTINE_A + SUBROUTINE_B + SUBROUTINE_C + CONTINUOUS_MODE
+ANSWER = PROBLEM.computer.run_program([ord(c) for c in INPUT])
+pretty_print_grid(generate_grid(ANSWER))
+utils.pretty_print_answer(2, ANSWER[-1])

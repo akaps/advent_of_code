@@ -67,7 +67,8 @@ ANSWER = len(PROBLEM.colors)
 assert ANSWER == 1709
 utils.pretty_print_answer(1, len(PROBLEM.colors))
 
-# PROBLEM = Painter('input.txt')
-# PROBLEM.paint()
-# print('answer to part 2:')
-# print(PROBLEM)
+PROBLEM = Painter('input.txt')
+PROBLEM.colors[PROBLEM.vector.magnitude] = 1
+PROBLEM.paint()
+print('answer to part 2:')
+print(PROBLEM)

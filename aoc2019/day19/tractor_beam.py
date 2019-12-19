@@ -65,25 +65,38 @@ def pretty_print_grid(grid):
             else:
                 row.append(STATIONARY)
         result.append(''.join(row))
-    return '\n'.join(result)
+    print('\n'.join(result))
 
 class TractorBeam:
     def __init__(self, input_file):
         self.grid = {}
         self.computer = IntCode(input_file)
-        self.fill_grid()
 
-    def fill_grid(self):
-        for y_pos in range(50):
-            for x_pos in range(50):
-                self.computer.reinitialize()
-                computer_input = [y_pos, x_pos]
-                result = self.computer.run_program(computer_input)
-                self.grid[(y_pos, x_pos)] = PULLED if result[0] else STATIONARY
+    def project_beam(self, distance):
+        y_top = 0
+        for x_pos in range(distance):
+            while not self.evaluate_position(y_top, x_pos) and y_top < x_pos:
+                y_top += 1
+            y_runner = y_top + 1
+            while self.evaluate_position(y_runner, x_pos):
+                y_runner += 1
+
+    def evaluate_position(self, y_pos, x_pos):
+        self.computer.reinitialize()
+        computer_input = [y_pos, x_pos]
+        is_pulled =  self.computer.run_program(computer_input).pop(0)
+        self.grid[(y_pos, x_pos)] = PULLED if is_pulled else STATIONARY
+        return is_pulled
+
+    def find_gap(self, size):
+        return -1
 
 SAMPLE = sample_grid()
 assert count_pulled(SAMPLE) == 27
 
 PROBLEM = TractorBeam('input.txt')
+PROBLEM.project_beam(50)
 ANSWER = count_pulled(PROBLEM.grid)
+assert ANSWER == 206
 utils.pretty_print_answer(1, ANSWER)
+utils.pretty_print_answer(2, PROBLEM.find_gap(100))

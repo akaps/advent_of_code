@@ -1,27 +1,27 @@
-from collections import deque
+import utils
+
+OPEN_PAREN = '('
+CLOSE_PAREN = ')'
 
 class Elevators:
     def __init__(self):
         self.first = 0
         self.bottom = False
-        pass
 
-    def calculate_floors(self, input):
+    def calculate_floors(self, line):
         floor = 0
-        for paren in input:
+        for paren in line:
             if not self.bottom:
                 self.first += 1
-            if paren == '(':
+            if paren == OPEN_PAREN:
                 floor += 1
-            elif paren == ')':
+            elif paren == CLOSE_PAREN:
                 floor -= 1
             if floor == -1:
                 self.bottom = True
         return floor
 
-elevators = Elevators()
-file = open('input.txt')
-input = file.read().strip()
-file.close()
-print(elevators.calculate_floors(input))
-print(elevators.first)
+ELEVATORS = Elevators()
+LINES = utils.read_lines('input.txt')
+utils.pretty_print_answer(1, ELEVATORS.calculate_floors(LINES[0]))
+utils.pretty_print_answer(2, ELEVATORS.first)

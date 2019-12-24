@@ -1,3 +1,5 @@
+import utils
+
 def get_mods(direction):
     if direction == '>':
         return 0, 1
@@ -42,16 +44,18 @@ def travel_pt2(directions):
             process_location(location_odd, houses)
     return len(houses)
 
+def test_part_1():
+    assert travel_pt1('>') == 2
+    assert travel_pt1('^>v<') == 4
+    assert travel_pt1('^v^v^v^v^v') == 2
 
-assert travel_pt1('>') == 2
-assert travel_pt1('^>v<') == 4
-assert travel_pt1('^v^v^v^v^v') == 2
+def test_part_2():
+    assert travel_pt2('^v') == 3
+    assert travel_pt2('^>v<') == 3
+    assert travel_pt2('^v^v^v^v^v') == 11
+
 FILE = open('input.txt')
 DIRECTIONS = FILE.readline().strip()
 FILE.close()
-print(travel_pt1(DIRECTIONS))
-
-assert travel_pt2('^v') == 3
-assert travel_pt2('^>v<') == 3
-assert travel_pt2('^v^v^v^v^v') == 11
-print(travel_pt2(DIRECTIONS))
+utils.pretty_print_answer(1, travel_pt1(DIRECTIONS))
+utils.pretty_print_answer(2, travel_pt2(DIRECTIONS))

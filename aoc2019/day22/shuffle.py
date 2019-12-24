@@ -1,4 +1,5 @@
 import re
+import utils
 
 DEAL = r'deal into new stack'
 CUT = r'cut (-?\d+)'
@@ -14,9 +15,7 @@ class Deck:
         self.deck = [x for x in range(num_cards)]
 
     def shuffle(self, instruction_file):
-        file = open(instruction_file)
-        lines = [line.strip() for line in file.readlines()]
-        file.close()
+        lines = utils.read_lines(instruction_file)
         for line in lines:
             if re.match(DEAL, line):
                 self.deal_stack()
@@ -63,4 +62,4 @@ assert SAMPLE.deck == [9, 2, 5, 8, 1, 4, 7, 0, 3, 6]
 
 PROBLEM = Deck(10007)
 PROBLEM.shuffle('input.txt')
-print(PROBLEM.deck.index(2019))
+utils.pretty_print_answer(1, PROBLEM.deck.index(2019))

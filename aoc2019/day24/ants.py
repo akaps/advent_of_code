@@ -1,3 +1,5 @@
+import utils
+
 BUG = '#'
 EMPTY = '.'
 DIM = 5
@@ -90,4 +92,4 @@ SCORE = SAMPLE.find_first_repeat_score()
 assert SCORE == 2129920
 
 PROBLEM = Ants('input.txt')
-print('Answer to part 1: {ans}'.format(ans=PROBLEM.find_first_repeat_score()))
+utils.pretty_print_answer(1, PROBLEM.find_first_repeat_score())

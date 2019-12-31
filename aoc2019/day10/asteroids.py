@@ -1,6 +1,5 @@
 import math
 import copy
-import numpy
 import utils
 
 ASTEROID = '#'

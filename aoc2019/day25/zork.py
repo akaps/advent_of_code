@@ -1,5 +1,6 @@
 import re
-from int_code import IntCode, MissingInputError
+from aoc2019.int_code import IntCode, MissingInputError
+import aoc2019.springscript as springscript
 
 NEWLINE = '\n'
 EXIT = 'exit'
@@ -7,13 +8,6 @@ SAVE = 'save'
 LOAD = 'load'
 SAVE_FILE = 'state.txt'
 INPUT_FILE = 'input.txt'
-
-def translate_to_chars(ascii_vals):
-    result = [chr(i) for i in ascii_vals]
-    return ''.join(result)
-
-def translate_to_ascii(chars):
-    return [ord(c) for c in chars]
 
 def save(file_name):
     file = open(file_name, 'w')
@@ -27,10 +21,10 @@ def save(file_name):
 
 def load(computer, file_name):
     file = open(file_name, 'r')
-    registers, ip, relative_base = file.readlines()
+    registers, ptr, relative_base = file.readlines()
     file.close()
     computer.registers = [int(x) for x in re.split(r',', registers.strip())]
-    computer.instruction_pointer = int(ip) - 3
+    computer.instruction_pointer = int(ptr) - 3
     computer.relative_base = int(relative_base)
     computer.output = []
 
@@ -44,7 +38,7 @@ while input_string != EXIT:
     except MissingInputError:
         result = PROBLEM.output
         PROBLEM.output = []
-        input_string = input(translate_to_chars(result))
+        input_string = input(springscript.translate_to_chars(result))
         if input_string == SAVE:
             save(SAVE_FILE)
             input_list = []
@@ -54,4 +48,4 @@ while input_string != EXIT:
             input_list = []
             continue
         else:
-            input_list = translate_to_ascii(input_string + NEWLINE)
+            input_list = springscript.translate_to_ascii(input_string + NEWLINE)

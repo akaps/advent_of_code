@@ -1,4 +1,5 @@
-from int_code import IntCode, MissingInputError
+import utils
+from aoc2019.int_code import IntCode, MissingInputError
 
 NUM_COMPUTERS = 50
 EMPTY = -1
@@ -32,4 +33,4 @@ class Network:
                 current_computer.output = []
 
 PROBLEM = Network('input.txt')
-print(PROBLEM.run_network())
+utils.pretty_print_answer(1, PROBLEM.run_network())

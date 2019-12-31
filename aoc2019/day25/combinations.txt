@@ -1,0 +1,1008 @@
+take food ration
+east
+drop food ration
+take weather machine
+east
+drop weather machine
+take antenna
+east
+drop antenna
+take jam
+east
+drop jam
+take semiconductor
+east
+drop semiconductor
+take planetoid
+east
+drop planetoid
+take monolith
+east
+drop monolith
+take food ration
+take weather machine
+east
+drop food ration
+drop weather machine
+take food ration
+take antenna
+east
+drop food ration
+drop antenna
+take food ration
+take jam
+east
+drop food ration
+drop jam
+take food ration
+take semiconductor
+east
+drop food ration
+drop semiconductor
+take food ration
+take planetoid
+east
+drop food ration
+drop planetoid
+take food ration
+take monolith
+east
+drop food ration
+drop monolith
+take weather machine
+take antenna
+east
+drop weather machine
+drop antenna
+take weather machine
+take jam
+east
+drop weather machine
+drop jam
+take weather machine
+take semiconductor
+east
+drop weather machine
+drop semiconductor
+take weather machine
+take planetoid
+east
+drop weather machine
+drop planetoid
+take weather machine
+take monolith
+east
+drop weather machine
+drop monolith
+take antenna
+take jam
+east
+drop antenna
+drop jam
+take antenna
+take semiconductor
+east
+drop antenna
+drop semiconductor
+take antenna
+take planetoid
+east
+drop antenna
+drop planetoid
+take antenna
+take monolith
+east
+drop antenna
+drop monolith
+take jam
+take semiconductor
+east
+drop jam
+drop semiconductor
+take jam
+take planetoid
+east
+drop jam
+drop planetoid
+take jam
+take monolith
+east
+drop jam
+drop monolith
+take semiconductor
+take planetoid
+east
+drop semiconductor
+drop planetoid
+take semiconductor
+take monolith
+east
+drop semiconductor
+drop monolith
+take planetoid
+take monolith
+east
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take antenna
+east
+drop food ration
+drop weather machine
+drop antenna
+take food ration
+take weather machine
+take jam
+east
+drop food ration
+drop weather machine
+drop jam
+take food ration
+take weather machine
+take semiconductor
+east
+drop food ration
+drop weather machine
+drop semiconductor
+take food ration
+take weather machine
+take planetoid
+east
+drop food ration
+drop weather machine
+drop planetoid
+take food ration
+take weather machine
+take monolith
+east
+drop food ration
+drop weather machine
+drop monolith
+take food ration
+take antenna
+take jam
+east
+drop food ration
+drop antenna
+drop jam
+take food ration
+take antenna
+take semiconductor
+east
+drop food ration
+drop antenna
+drop semiconductor
+take food ration
+take antenna
+take planetoid
+east
+drop food ration
+drop antenna
+drop planetoid
+take food ration
+take antenna
+take monolith
+east
+drop food ration
+drop antenna
+drop monolith
+take food ration
+take jam
+take semiconductor
+east
+drop food ration
+drop jam
+drop semiconductor
+take food ration
+take jam
+take planetoid
+east
+drop food ration
+drop jam
+drop planetoid
+take food ration
+take jam
+take monolith
+east
+drop food ration
+drop jam
+drop monolith
+take food ration
+take semiconductor
+take planetoid
+east
+drop food ration
+drop semiconductor
+drop planetoid
+take food ration
+take semiconductor
+take monolith
+east
+drop food ration
+drop semiconductor
+drop monolith
+take food ration
+take planetoid
+take monolith
+east
+drop food ration
+drop planetoid
+drop monolith
+take weather machine
+take antenna
+take jam
+east
+drop weather machine
+drop antenna
+drop jam
+take weather machine
+take antenna
+take semiconductor
+east
+drop weather machine
+drop antenna
+drop semiconductor
+take weather machine
+take antenna
+take planetoid
+east
+drop weather machine
+drop antenna
+drop planetoid
+take weather machine
+take antenna
+take monolith
+east
+drop weather machine
+drop antenna
+drop monolith
+take weather machine
+take jam
+take semiconductor
+east
+drop weather machine
+drop jam
+drop semiconductor
+take weather machine
+take jam
+take planetoid
+east
+drop weather machine
+drop jam
+drop planetoid
+take weather machine
+take jam
+take monolith
+east
+drop weather machine
+drop jam
+drop monolith
+take weather machine
+take semiconductor
+take planetoid
+east
+drop weather machine
+drop semiconductor
+drop planetoid
+take weather machine
+take semiconductor
+take monolith
+east
+drop weather machine
+drop semiconductor
+drop monolith
+take weather machine
+take planetoid
+take monolith
+east
+drop weather machine
+drop planetoid
+drop monolith
+take antenna
+take jam
+take semiconductor
+east
+drop antenna
+drop jam
+drop semiconductor
+take antenna
+take jam
+take planetoid
+east
+drop antenna
+drop jam
+drop planetoid
+take antenna
+take jam
+take monolith
+east
+drop antenna
+drop jam
+drop monolith
+take antenna
+take semiconductor
+take planetoid
+east
+drop antenna
+drop semiconductor
+drop planetoid
+take antenna
+take semiconductor
+take monolith
+east
+drop antenna
+drop semiconductor
+drop monolith
+take antenna
+take planetoid
+take monolith
+east
+drop antenna
+drop planetoid
+drop monolith
+take jam
+take semiconductor
+take planetoid
+east
+drop jam
+drop semiconductor
+drop planetoid
+take jam
+take semiconductor
+take monolith
+east
+drop jam
+drop semiconductor
+drop monolith
+take jam
+take planetoid
+take monolith
+east
+drop jam
+drop planetoid
+drop monolith
+take semiconductor
+take planetoid
+take monolith
+east
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take antenna
+take jam
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+take food ration
+take weather machine
+take antenna
+take semiconductor
+east
+drop food ration
+drop weather machine
+drop antenna
+drop semiconductor
+take food ration
+take weather machine
+take antenna
+take planetoid
+east
+drop food ration
+drop weather machine
+drop antenna
+drop planetoid
+take food ration
+take weather machine
+take antenna
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop monolith
+take food ration
+take weather machine
+take jam
+take semiconductor
+east
+drop food ration
+drop weather machine
+drop jam
+drop semiconductor
+take food ration
+take weather machine
+take jam
+take planetoid
+east
+drop food ration
+drop weather machine
+drop jam
+drop planetoid
+take food ration
+take weather machine
+take jam
+take monolith
+east
+drop food ration
+drop weather machine
+drop jam
+drop monolith
+take food ration
+take weather machine
+take semiconductor
+take planetoid
+east
+drop food ration
+drop weather machine
+drop semiconductor
+drop planetoid
+take food ration
+take weather machine
+take semiconductor
+take monolith
+east
+drop food ration
+drop weather machine
+drop semiconductor
+drop monolith
+take food ration
+take weather machine
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop planetoid
+drop monolith
+take food ration
+take antenna
+take jam
+take semiconductor
+east
+drop food ration
+drop antenna
+drop jam
+drop semiconductor
+take food ration
+take antenna
+take jam
+take planetoid
+east
+drop food ration
+drop antenna
+drop jam
+drop planetoid
+take food ration
+take antenna
+take jam
+take monolith
+east
+drop food ration
+drop antenna
+drop jam
+drop monolith
+take food ration
+take antenna
+take semiconductor
+take planetoid
+east
+drop food ration
+drop antenna
+drop semiconductor
+drop planetoid
+take food ration
+take antenna
+take semiconductor
+take monolith
+east
+drop food ration
+drop antenna
+drop semiconductor
+drop monolith
+take food ration
+take antenna
+take planetoid
+take monolith
+east
+drop food ration
+drop antenna
+drop planetoid
+drop monolith
+take food ration
+take jam
+take semiconductor
+take planetoid
+east
+drop food ration
+drop jam
+drop semiconductor
+drop planetoid
+take food ration
+take jam
+take semiconductor
+take monolith
+east
+drop food ration
+drop jam
+drop semiconductor
+drop monolith
+take food ration
+take jam
+take planetoid
+take monolith
+east
+drop food ration
+drop jam
+drop planetoid
+drop monolith
+take food ration
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop semiconductor
+drop planetoid
+drop monolith
+take weather machine
+take antenna
+take jam
+take semiconductor
+east
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+take weather machine
+take antenna
+take jam
+take planetoid
+east
+drop weather machine
+drop antenna
+drop jam
+drop planetoid
+take weather machine
+take antenna
+take jam
+take monolith
+east
+drop weather machine
+drop antenna
+drop jam
+drop monolith
+take weather machine
+take antenna
+take semiconductor
+take planetoid
+east
+drop weather machine
+drop antenna
+drop semiconductor
+drop planetoid
+take weather machine
+take antenna
+take semiconductor
+take monolith
+east
+drop weather machine
+drop antenna
+drop semiconductor
+drop monolith
+take weather machine
+take antenna
+take planetoid
+take monolith
+east
+drop weather machine
+drop antenna
+drop planetoid
+drop monolith
+take weather machine
+take jam
+take semiconductor
+take planetoid
+east
+drop weather machine
+drop jam
+drop semiconductor
+drop planetoid
+take weather machine
+take jam
+take semiconductor
+take monolith
+east
+drop weather machine
+drop jam
+drop semiconductor
+drop monolith
+take weather machine
+take jam
+take planetoid
+take monolith
+east
+drop weather machine
+drop jam
+drop planetoid
+drop monolith
+take weather machine
+take semiconductor
+take planetoid
+take monolith
+east
+drop weather machine
+drop semiconductor
+drop planetoid
+drop monolith
+take antenna
+take jam
+take semiconductor
+take planetoid
+east
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+take antenna
+take jam
+take semiconductor
+take monolith
+east
+drop antenna
+drop jam
+drop semiconductor
+drop monolith
+take antenna
+take jam
+take planetoid
+take monolith
+east
+drop antenna
+drop jam
+drop planetoid
+drop monolith
+take antenna
+take semiconductor
+take planetoid
+take monolith
+east
+drop antenna
+drop semiconductor
+drop planetoid
+drop monolith
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take antenna
+take jam
+take semiconductor
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+take food ration
+take weather machine
+take antenna
+take jam
+take planetoid
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop planetoid
+take food ration
+take weather machine
+take antenna
+take jam
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop monolith
+take food ration
+take weather machine
+take antenna
+take semiconductor
+take planetoid
+east
+drop food ration
+drop weather machine
+drop antenna
+drop semiconductor
+drop planetoid
+take food ration
+take weather machine
+take antenna
+take semiconductor
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop semiconductor
+drop monolith
+take food ration
+take weather machine
+take antenna
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take jam
+take semiconductor
+take planetoid
+east
+drop food ration
+drop weather machine
+drop jam
+drop semiconductor
+drop planetoid
+take food ration
+take weather machine
+take jam
+take semiconductor
+take monolith
+east
+drop food ration
+drop weather machine
+drop jam
+drop semiconductor
+drop monolith
+take food ration
+take weather machine
+take jam
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop jam
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take antenna
+take jam
+take semiconductor
+take planetoid
+east
+drop food ration
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+take food ration
+take antenna
+take jam
+take semiconductor
+take monolith
+east
+drop food ration
+drop antenna
+drop jam
+drop semiconductor
+drop monolith
+take food ration
+take antenna
+take jam
+take planetoid
+take monolith
+east
+drop food ration
+drop antenna
+drop jam
+drop planetoid
+drop monolith
+take food ration
+take antenna
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop antenna
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take weather machine
+take antenna
+take jam
+take semiconductor
+take planetoid
+east
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+take weather machine
+take antenna
+take jam
+take semiconductor
+take monolith
+east
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+drop monolith
+take weather machine
+take antenna
+take jam
+take planetoid
+take monolith
+east
+drop weather machine
+drop antenna
+drop jam
+drop planetoid
+drop monolith
+take weather machine
+take antenna
+take semiconductor
+take planetoid
+take monolith
+east
+drop weather machine
+drop antenna
+drop semiconductor
+drop planetoid
+drop monolith
+take weather machine
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop weather machine
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take antenna
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take antenna
+take jam
+take semiconductor
+take planetoid
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+take food ration
+take weather machine
+take antenna
+take jam
+take semiconductor
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+drop monolith
+take food ration
+take weather machine
+take antenna
+take jam
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop jam
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take antenna
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop antenna
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take weather machine
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop weather machine
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take food ration
+take antenna
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop food ration
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith
+take weather machine
+take antenna
+take jam
+take semiconductor
+take planetoid
+take monolith
+east
+drop weather machine
+drop antenna
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith

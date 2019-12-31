@@ -35,6 +35,7 @@ input_list = []
 while input_string != EXIT:
     try:
         print(PROBLEM.run_program(input_list))
+        input_string = EXIT
     except MissingInputError:
         result = PROBLEM.output
         PROBLEM.output = []
@@ -49,3 +50,6 @@ while input_string != EXIT:
             continue
         else:
             input_list = springscript.translate_to_ascii(input_string + NEWLINE)
+FILE = open('answer_pt_1.txt', 'w')
+FILE.write(springscript.translate_to_chars(PROBLEM.output))
+FILE.close()

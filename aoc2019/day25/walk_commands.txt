@@ -1,0 +1,40 @@
+east
+east
+take semiconductor
+north
+take planetoid
+north
+take antenna
+south
+west
+take food ration
+west
+west
+take monolith
+east
+east
+north
+take space law space brochure
+east
+take jam
+west
+north
+north
+take weather machine
+south
+south
+south
+east
+south
+east
+south
+south
+east
+drop food ration
+drop weather machine
+drop antenna
+drop space law space brochure
+drop jam
+drop semiconductor
+drop planetoid
+drop monolith

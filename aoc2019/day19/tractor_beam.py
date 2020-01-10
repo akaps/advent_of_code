@@ -11,47 +11,6 @@ def count_pulled(grid):
             total += 1
     return total
 
-def sample_grid():
-    grid = {}
-    grid[(0, 0)] = PULLED
-    grid[(1, 0)] = STATIONARY
-
-    grid[(1, 1)] = PULLED
-
-    grid[(2, 2)] = PULLED
-    grid[(3, 2)] = PULLED
-
-    grid[(3, 3)] = PULLED
-    grid[(4, 3)] = PULLED
-    grid[(5, 3)] = PULLED
-
-    grid[(4, 4)] = PULLED
-    grid[(5, 4)] = PULLED
-    grid[(6, 4)] = PULLED
-
-    grid[(5, 5)] = PULLED
-    grid[(6, 5)] = PULLED
-    grid[(7, 5)] = PULLED
-    grid[(8, 5)] = PULLED
-
-    grid[(6, 6)] = PULLED
-    grid[(7, 6)] = PULLED
-    grid[(8, 6)] = PULLED
-    grid[(9, 6)] = PULLED
-
-    grid[(6, 7)] = PULLED
-    grid[(7, 7)] = PULLED
-    grid[(8, 7)] = PULLED
-    grid[(9, 7)] = PULLED
-
-    grid[(7, 8)] = PULLED
-    grid[(8, 8)] = PULLED
-    grid[(9, 8)] = PULLED
-
-    grid[(8, 9)] = PULLED
-    grid[(9, 9)] = PULLED
-    return grid
-
 def pretty_print_grid(grid):
     x_max = max([key[0] for key in grid])
     y_max = max([key[0] for key in grid])
@@ -82,21 +41,23 @@ class TractorBeam:
                 y_runner += 1
 
     def evaluate_position(self, y_pos, x_pos):
-        self.computer.reinitialize()
-        computer_input = [y_pos, x_pos]
-        is_pulled =  self.computer.run_program(computer_input).pop(0)
+        program = self.computer.load_program()
+        program.send(None)
+        program.send(y_pos)
+        is_pulled = program.send(x_pos)[0]
         self.grid[(y_pos, x_pos)] = PULLED if is_pulled else STATIONARY
         return is_pulled
 
     def find_gap(self, size):
         return -1
 
-SAMPLE = sample_grid()
-assert count_pulled(SAMPLE) == 27
+def main():
+    problem = TractorBeam('input.txt')
+    problem.project_beam(50)
+    answer = count_pulled(problem.grid)
+    assert answer == 206
+    utils.pretty_print_answer(1, answer)
+    utils.pretty_print_answer(2, problem.find_gap(100))
 
-PROBLEM = TractorBeam('input.txt')
-PROBLEM.project_beam(50)
-ANSWER = count_pulled(PROBLEM.grid)
-assert ANSWER == 206
-utils.pretty_print_answer(1, ANSWER)
-utils.pretty_print_answer(2, PROBLEM.find_gap(100))
+if __name__ == '__main__':
+    main()

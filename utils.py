@@ -12,3 +12,10 @@ def read_lines(file_name):
     lines = [s.strip() for s in file.readlines()]
     file.close()
     return lines
+
+def translate_to_chars(ascii_vals):
+    result = [chr(i) for i in ascii_vals]
+    return ''.join(result)
+
+def translate_to_ascii(chars):
+    return [ord(c) for c in chars]

@@ -41,8 +41,7 @@ class Amplifiers:
                 for index, program in enumerate(programs):
                     prev_index = (index + self.NUM_AMPLIFIERS - 1) % self.NUM_AMPLIFIERS
                     result = None
-                    for result_val in results[prev_index]:
-                        result = program.send(result_val)
+                    result = program.send(results[prev_index][0])
                     assert result
                     results[index] = result
             except StopIteration:
@@ -60,8 +59,13 @@ class Amplifiers:
 
 def main():
     problem = Amplifiers('input.txt')
-    print('Answer to part 1:', problem.find_largest_output())
-    print('Answer to part 2:', problem.largest_feedback_loop())
+    answer_pt_1 = problem.find_largest_output()
+    assert answer_pt_1 == 298586
+    print('Answer to part 1:', answer_pt_1)
+
+    answer_pt_2 = problem.largest_feedback_loop()
+    assert answer_pt_2 == 9246095
+    print('Answer to part 2:', answer_pt_2)
 
 if __name__ == '__main__':
     main()

@@ -43,6 +43,7 @@ class IntCode:
         file = open(input_file, 'r')
         self.initial_state = [int(x) for x in re.split(self.COMMA, file.readline().strip())]
         file.close()
+        self.final_state = None
 
     def parse_parameter(self, state, parameter, mode):
         if mode == self.ADDRESS:
@@ -167,5 +168,5 @@ class IntCode:
                     opcode=opcode,
                     pos=instruction_pointer)
             state.instruction_pointer += ip_mod
+        self.final_state = state.registers
         yield state.output
-        yield state.registers

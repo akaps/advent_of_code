@@ -97,7 +97,7 @@ class IntCode:
         return 2
 
     def jump_if_true(self, state, modes):
-        non_zero, jump = self.get_parameters(1, 3)
+        non_zero, jump = self.get_parameters(state, 1, 3)
         nz_mode, jmp_mode, _ = modes
         if self.parse_parameter(state, non_zero, nz_mode):
             state.instruction_pointer = self.parse_parameter(state, jump, jmp_mode)
@@ -105,7 +105,7 @@ class IntCode:
         return 3
 
     def jump_if_false(self, state, modes):
-        non_zero, jump = self.get_parameters(1, 3)
+        non_zero, jump = self.get_parameters(state, 1, 3)
         nz_mode, jmp_mode, _ = modes
         if self.parse_parameter(state, non_zero, nz_mode):
             return 3
@@ -113,7 +113,7 @@ class IntCode:
         return 0
 
     def less_than(self, state, modes):
-        left, right, store = self.get_parameters(1, 4)
+        left, right, store = self.get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, 1 if (
             self.parse_parameter(state, left, left_mode)
@@ -121,7 +121,7 @@ class IntCode:
         return 4
 
     def equals(self, state, modes):
-        left, right, store = self.get_parameters(1, 4)
+        left, right, store = self.get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, 1 if (
             self.parse_parameter(state, left, left_mode)
@@ -167,5 +167,5 @@ class IntCode:
                     opcode=opcode,
                     pos=instruction_pointer)
             state.instruction_pointer += ip_mod
-        assert not state.output
+        yield state.output
         yield state.registers

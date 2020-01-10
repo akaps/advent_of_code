@@ -7,8 +7,8 @@ def find_noun_verb(computer, target):
             computer.initial_state[1] = noun
             computer.initial_state[2] = verb
             generator = computer.load_program()
-            result = generator.send(None)[0]
-            if result == target:
+            generator.send(None)
+            if computer.final_state[0] == target:
                 return 100 * noun + verb
     assert False, 'Unreachable'
     return -1
@@ -17,7 +17,8 @@ COMPUTER = IntCode('input.txt')
 COMPUTER.initial_state[1] = 12
 COMPUTER.initial_state[2] = 2
 GENERATOR = COMPUTER.load_program()
-ANSWER = GENERATOR.send(None)[0]
+GENERATOR.send(None)
+ANSWER = COMPUTER.final_state[0]
 assert ANSWER == 2692315
 utils.pretty_print_answer(1, ANSWER)
 

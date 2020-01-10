@@ -1,8 +1,10 @@
 import itertools
+from collections import defaultdict
 from aoc2019.int_code import IntCode
 
 class Amplifiers:
     NUM_AMPLIFIERS = 5
+    LAST = 4
 
     def __init__(self, file_name):
         self.amplifiers = [IntCode(file_name) for _ in range(self.NUM_AMPLIFIERS)]
@@ -22,46 +24,44 @@ class Amplifiers:
                 largest_output = output
         return largest_output
 
-    # def is_halted(self, amplifier):
-    #     return amplifier.registers[amplifier.instruction_pointer] == 99
+    def initialize_programs(self, combination):
+        programs = []
+        for index, amplifier in enumerate(self.amplifiers):
+            next_program = amplifier.load_program()
+            next_program.send(None)
+            next_program.send(combination[index])
+            programs.append(next_program)
+        return programs
 
-    # def initialize_amplifiers(self, combination):
-    #     previous_result = [0]
-    #     for index, phase in enumerate(combination):
-    #         previous_result.insert(0, phase)
-    #         try:
-    #             previous_result = self.amplifiers[index].run_program(previous_result)
-    #         except MissingInputError:
-    #             previous_result = self.amplifiers[index].output
-    #             self.amplifiers[index].output = []
-    #     return previous_result
+    def run_feedback_loop(self, combination):
+        programs = self.initialize_programs(combination)
+        results = defaultdict(lambda: [0])
+        while True:
+            try:
+                for index, program in enumerate(programs):
+                    prev_index = (index + self.NUM_AMPLIFIERS - 1) % self.NUM_AMPLIFIERS
+                    result = None
+                    for result_val in results[prev_index]:
+                        result = program.send(result_val)
+                    assert result
+                    results[index] = result
+            except StopIteration:
+                break
+        return results[self.LAST][0]
 
-    # def run_feedback_loop(self, combination):
-    #     previous_result = self.initialize_amplifiers(combination)
-    #     while not self.is_halted(self.amplifiers[-1]):
-    #         for amplifier in self.amplifiers:
-    #             try:
-    #                 previous_result = amplifier.run_program(previous_result)
-    #             except MissingInputError:
-    #                 previous_result = amplifier.output
-    #                 amplifier.output = []
-    #     return previous_result[0]
+    def largest_feedback_loop(self):
+        combinations = itertools.permutations(range(5, 10))
+        largest_output = None
+        for combination in combinations:
+            output_val = self.run_feedback_loop(combination)
+            if not largest_output or output_val > largest_output:
+                largest_output = output_val
+        return largest_output
 
-    # def reinitialize_amplifiers(self):
-    #     for amplifier in self.amplifiers:
-    #         amplifier.reinitialize()
+def main():
+    problem = Amplifiers('input.txt')
+    print('Answer to part 1:', problem.find_largest_output())
+    print('Answer to part 2:', problem.largest_feedback_loop())
 
-    # def largest_feedback_loop(self):
-    #     combinations = itertools.permutations(range(5, 10))
-    #     largest_output = None
-    #     for combination in combinations:
-    #         output_val = self.run_feedback_loop(combination)
-    #         if not largest_output or output_val > largest_output:
-    #             largest_output = output_val
-    #     return largest_output
-
-PROBLEM = Amplifiers('input.txt')
-print('Answer to part 1:', PROBLEM.find_largest_output())
-
-# PROBLEM.reinitialize_amplifiers()
-# print('Answer to part 2:', PROBLEM.largest_feedback_loop())
+if __name__ == '__main__':
+    main()

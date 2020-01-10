@@ -1,5 +1,5 @@
 import utils
-from aoc2019.int_code import IntCode, MissingInputError
+from aoc2019.int_code import IntCode
 
 EMPTY = 0
 WALL = 1
@@ -53,27 +53,17 @@ class Breakout:
         return RIGHT
 
     def run(self, debug=False):
-        try:
-            result = self.model.run_program()
+        program = self.model.load_program()
+        result = program.send(None)
+        while isinstance(result, list):
             self.update_tiles(result)
-        except MissingInputError:
-            result = self.model.output
-            self.model.output = []
-            self.update_tiles(result)
-            while self.model.registers[self.model.instruction_pointer] != self.model.STOP:
-                next_move = None
-                if debug:
-                    print(self)
-                    next_move = int(input('next_move'))
-                else:
-                    next_move = self.generate_next_move()
-                try:
-                    result = self.model.run_program([next_move])
-                except MissingInputError:
-                    result = self.model.output
-                    self.model.output = []
-                    self.update_tiles(result)
-        self.update_tiles(result)
+            next_move = None
+            if debug:
+                print(self)
+                next_move = int(input('next_move'))
+            else:
+                next_move = self.generate_next_move()
+            result = program.send(next_move)
 
     def update_tiles(self, results):
         for left_right, up_down, tile in parse_results(results):
@@ -100,25 +90,17 @@ class Breakout:
         rows.append('score: {score}'.format(score=self.score))
         return '\n'.join(rows)
 
-RESULT = [1, 2, 3, 6, 5, 4]
-PARSED = parse_results(RESULT)
-assert len(PARSED) == 2
-assert PARSED[0] == (1, 2, 3)
-assert PARSED[1] == (6, 5, 4)
+def main():
+    problem = Breakout('input.txt')
+    problem.run()
+    utils.pretty_print_answer(1, problem.count_tiles(BLOCK))
 
-SAMPLE = Breakout('input.txt')
-for x, y, z in PARSED:
-    SAMPLE.update_tile(x, y, z)
-assert SAMPLE.count_tiles(BALL) == 1
-assert SAMPLE.count_tiles(HORIZ_PADDLE) == 1
+    problem = Breakout('input.txt')
+    problem.model.initial_state[0] = 2
+    problem.run()
+    assert problem.count_tiles(BLOCK) == 0
+    assert problem.score == 13581
+    utils.pretty_print_answer(2, problem.score)
 
-PROBLEM = Breakout('input.txt')
-PROBLEM.run()
-utils.pretty_print_answer(1, PROBLEM.count_tiles(BLOCK))
-
-PROBLEM = Breakout('input.txt')
-PROBLEM.model.registers[0] = 2
-PROBLEM.run()
-assert PROBLEM.count_tiles(BLOCK) == 0
-assert PROBLEM.score == 13581
-utils.pretty_print_answer(2, PROBLEM.score)
+if __name__ == '__main__':
+    main()

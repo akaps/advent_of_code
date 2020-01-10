@@ -9,4 +9,4 @@ utils.pretty_print_answer(1, ANSWER)
 PROBLEM = SpringScript('input.txt', 'run_program.txt')
 ANSWER = PROBLEM.run()
 assert ANSWER == 1145849660
-utils.pretty_print_answer(1,  ANSWER)
+utils.pretty_print_answer(2, ANSWER)

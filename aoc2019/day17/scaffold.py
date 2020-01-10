@@ -31,7 +31,8 @@ def pretty_print_grid(grid):
 class Scaffold:
     def __init__(self, input_file):
         self.computer = IntCode(input_file)
-        self.map = generate_grid(self.computer.run_program())
+        program = self.computer.load_program()
+        self.map = generate_grid(program.send(None))
 
     def in_bounds(self, x_index, y_index):
         return (0 <= y_index < len(self.map)
@@ -60,9 +61,8 @@ assert ANSWER == 4408
 utils.pretty_print_answer(1, ANSWER)
 
 #waking up robot
-PROBLEM.computer.reinitialize()
-assert PROBLEM.computer.registers[0] == 1
-PROBLEM.computer.registers[0] = 2
+assert PROBLEM.computer.initial_state[0] == 1
+PROBLEM.computer.initial_state[0] = 2
 
 #answers from robot_program.txt
 MAIN = 'C,B,B,C,A,C,C,A,B,A\n'
@@ -71,6 +71,9 @@ SUBROUTINE_B = 'R,12,L,8,R,10\n'
 SUBROUTINE_C = 'R,8,L,12,R,8\n'
 CONTINUOUS_MODE = 'n\n'
 INPUT = MAIN + SUBROUTINE_A + SUBROUTINE_B + SUBROUTINE_C + CONTINUOUS_MODE
-ANSWER = PROBLEM.computer.run_program([ord(c) for c in INPUT])
-pretty_print_grid(generate_grid(ANSWER))
-utils.pretty_print_answer(2, ANSWER[-1])
+PROGRAM = PROBLEM.computer.load_program()
+GRID = PROGRAM.send(None)
+for char in INPUT:
+    GRID = PROGRAM.send(ord(char))
+pretty_print_grid(generate_grid(GRID))
+utils.pretty_print_answer(2, GRID[-1])

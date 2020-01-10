@@ -1,8 +1,10 @@
 import itertools
-from int_code import IntCode, MissingInputError
+from collections import defaultdict
+from aoc2019.int_code import IntCode
 
 class Amplifiers:
     NUM_AMPLIFIERS = 5
+    LAST = 4
 
     def __init__(self, file_name):
         self.amplifiers = [IntCode(file_name) for _ in range(self.NUM_AMPLIFIERS)]
@@ -14,41 +16,37 @@ class Amplifiers:
             output = 0
             for index, amplifier in enumerate(self.amplifiers):
                 phase_setting = combination[index]
-                amplifier.reinitialize()
-                output = amplifier.run_program([phase_setting, output])[0]
+                program = amplifier.load_program()
+                program.send(None)
+                program.send(phase_setting)
+                output = program.send(output)[0]
             if not largest_output or output > largest_output:
                 largest_output = output
         return largest_output
 
-    def is_halted(self, amplifier):
-        return amplifier.registers[amplifier.instruction_pointer] == 99
-
-    def initialize_amplifiers(self, combination):
-        previous_result = [0]
-        for index, phase in enumerate(combination):
-            previous_result.insert(0, phase)
-            try:
-                previous_result = self.amplifiers[index].run_program(previous_result)
-            except MissingInputError:
-                previous_result = self.amplifiers[index].output
-                self.amplifiers[index].output = []
-        return previous_result
+    def initialize_programs(self, combination):
+        programs = []
+        for index, amplifier in enumerate(self.amplifiers):
+            next_program = amplifier.load_program()
+            next_program.send(None)
+            next_program.send(combination[index])
+            programs.append(next_program)
+        return programs
 
     def run_feedback_loop(self, combination):
-        self.reinitialize_amplifiers()
-        previous_result = self.initialize_amplifiers(combination)
-        while not self.is_halted(self.amplifiers[-1]):
-            for amplifier in self.amplifiers:
-                try:
-                    previous_result = amplifier.run_program(previous_result)
-                except MissingInputError:
-                    previous_result = amplifier.output
-                    amplifier.output = []
-        return previous_result[0]
-
-    def reinitialize_amplifiers(self):
-        for amplifier in self.amplifiers:
-            amplifier.reinitialize()
+        programs = self.initialize_programs(combination)
+        results = defaultdict(lambda: [0])
+        while True:
+            try:
+                for index, program in enumerate(programs):
+                    prev_index = (index + self.NUM_AMPLIFIERS - 1) % self.NUM_AMPLIFIERS
+                    result = None
+                    result = program.send(results[prev_index][0])
+                    assert result
+                    results[index] = result
+            except StopIteration:
+                break
+        return results[self.LAST][0]
 
     def largest_feedback_loop(self):
         combinations = itertools.permutations(range(5, 10))
@@ -59,17 +57,15 @@ class Amplifiers:
                 largest_output = output_val
         return largest_output
 
-SAMPLE1 = Amplifiers('sample1.txt')
-assert SAMPLE1.find_largest_output() == 43210
+def main():
+    problem = Amplifiers('input.txt')
+    answer_pt_1 = problem.find_largest_output()
+    assert answer_pt_1 == 298586
+    print('Answer to part 1:', answer_pt_1)
 
-SAMPLE2 = Amplifiers('sample2.txt')
-assert SAMPLE2.find_largest_output() == 54321
+    answer_pt_2 = problem.largest_feedback_loop()
+    assert answer_pt_2 == 9246095
+    print('Answer to part 2:', answer_pt_2)
 
-SAMPLE3 = Amplifiers('sample3.txt')
-assert SAMPLE3.find_largest_output() == 65210
-
-PROBLEM = Amplifiers('input.txt')
-print('Answer to part 1:', PROBLEM.find_largest_output())
-
-PROBLEM.reinitialize_amplifiers()
-print('Answer to part 2:', PROBLEM.largest_feedback_loop())
+if __name__ == '__main__':
+    main()

@@ -1,5 +1,5 @@
 import utils
-from aoc2019.int_code import IntCode, MissingInputError
+from aoc2019.int_code import IntCode
 
 NUM_COMPUTERS = 50
 EMPTY = -1
@@ -8,16 +8,15 @@ HALT_PORT = 255
 
 class Network:
     def __init__(self, input_file):
-        self.computers = []
+        self.programs = []
         self.queue = []
+        computer = IntCode(input_file)
         for i in range(50):
-            next_comp = IntCode(input_file)
-            try:
-                next_comp.run_program([i, EMPTY])
-            except MissingInputError:
-                self.queue.extend(next_comp.output)
-                next_comp.output = []
-            self.computers.append(next_comp)
+            next_program = computer.load_program()
+            next_program.send(None)
+            next_program.send(i)
+            self.queue.extend(next_program.send(EMPTY))
+            self.programs.append(next_program)
 
     def run_network(self):
         while self.queue and len(self.queue) >= PACKET_LENGTH:
@@ -25,12 +24,11 @@ class Network:
             self.queue = self.queue[PACKET_LENGTH:]
             if port == HALT_PORT:
                 return y_val
-            current_computer = self.computers[port]
-            try:
-                current_computer.run_program([x_val, y_val])
-            except MissingInputError:
-                self.queue.extend(current_computer.output)
-                current_computer.output = []
+            current_program = self.programs[port]
+            current_program.send(x_val)
+            self.queue.extend(current_program.send(y_val))
 
 PROBLEM = Network('input.txt')
-utils.pretty_print_answer(1, PROBLEM.run_network())
+ANSWER = PROBLEM.run_network()
+assert ANSWER == 23057
+utils.pretty_print_answer(1, ANSWER)

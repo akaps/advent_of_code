@@ -69,5 +69,9 @@ class Recipes:
                 to_process.extend(ingredients)
         return num_ore
 
-PROBLEM = Recipes('input.txt')
-utils.pretty_print_answer(1, PROBLEM.ore_for_fuel())
+def main():
+    problem = Recipes('input.txt')
+    utils.pretty_print_answer(1, problem.ore_for_fuel())
+
+if __name__ == '__main__':
+    main()

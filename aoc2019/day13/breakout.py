@@ -90,13 +90,17 @@ class Breakout:
         rows.append('score: {score}'.format(score=self.score))
         return '\n'.join(rows)
 
-PROBLEM = Breakout('input.txt')
-PROBLEM.run()
-utils.pretty_print_answer(1, PROBLEM.count_tiles(BLOCK))
+def main():
+    problem = Breakout('input.txt')
+    problem.run()
+    utils.pretty_print_answer(1, problem.count_tiles(BLOCK))
 
-PROBLEM = Breakout('input.txt')
-PROBLEM.model.initial_state[0] = 2
-PROBLEM.run()
-assert PROBLEM.count_tiles(BLOCK) == 0
-assert PROBLEM.score == 13581
-utils.pretty_print_answer(2, PROBLEM.score)
+    problem = Breakout('input.txt')
+    problem.model.initial_state[0] = 2
+    problem.run()
+    assert problem.count_tiles(BLOCK) == 0
+    assert problem.score == 13581
+    utils.pretty_print_answer(2, problem.score)
+
+if __name__ == '__main__':
+    main()

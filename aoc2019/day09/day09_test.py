@@ -1,7 +1,7 @@
 from aoc2019.int_code import IntCode
 
 def test_copy():
-    computer = IntCode('sample1.txt')
+    computer = IntCode('day09/sample1.txt')
     program = computer.load_program()
     assert program.send(None) == [109,
                                   1,
@@ -21,12 +21,12 @@ def test_copy():
                                   99]
 
 def test_16_digits():
-    computer = IntCode('sample2.txt')
+    computer = IntCode('day09/sample2.txt')
     program = computer.load_program()
     result = program.send(None)[0]
     assert len(str(result)) == 16
 
 def test_middle_val():
-    computer = IntCode('sample3.txt')
+    computer = IntCode('day09/sample3.txt')
     program = computer.load_program()
     assert program.send(None)[0] == 1125899906842624

@@ -2,23 +2,23 @@ import utils
 from aoc2019.int_code import IntCode
 
 NEWLINE = '\n'
-EXIT = 'exit'
-SAVE = 'save'
-LOAD = 'load'
-SAVE_FILE = 'state.txt'
-INPUT_FILE = 'input.txt'
+EXIT = 'exit\n'
 
-COMPUTER = IntCode('input.txt')
+def main():
+    program = IntCode('input.txt').load_program()
+    output = program.send(None)
+    input_string = None
+    while input_string != EXIT:
+        input_string = input(utils.translate_to_chars(output) + NEWLINE)
+        input_string += NEWLINE
+        try:
+            for char in input_string:
+                output = program.send(ord(char))
+        except StopIteration:
+            break
+    file = open('answer_pt_1.txt', 'w')
+    file.write(utils.translate_to_chars(output))
+    file.close()
 
-PROGRAM = COMPUTER.load_program()
-RESULT = PROGRAM.send(None)
-while isinstance(RESULT, list):
-    input_string = input(utils.translate_to_chars(RESULT) + NEWLINE)
-    if input_string == EXIT:
-        break
-    input_string += NEWLINE
-    for char in input_string:
-        RESULT = PROGRAM.send(ord(char))
-FILE = open('answer_pt_1.txt', 'w')
-FILE.write(utils.translate_to_chars(RESULT))
-FILE.close()
+if __name__ == '__main__':
+    main()

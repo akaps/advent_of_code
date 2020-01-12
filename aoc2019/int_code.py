@@ -5,6 +5,11 @@ def generate_modes(instruction):
     modes.reverse()
     return modes
 
+def get_parameters(state, start, end=None):
+    if end:
+        return [state.registers[state.instruction_pointer + i] for i in range(start, end)]
+    return state.registers[state.instruction_pointer + start]
+
 class IntCodeState:
     def __init__(self, initial_state):
         self.registers = {index: x for index, x in enumerate(initial_state)}
@@ -60,11 +65,6 @@ class IntCode:
         assert False, 'Unexpected mode {mode}'.format(mode=mode)
         return -1
 
-    def get_parameters(self, state, start, end=None):
-        if end:
-            return [state.registers[state.instruction_pointer + i] for i in range(start, end)]
-        return state.registers[state.instruction_pointer + start]
-
     def store(self, state, store_pos, store_mode, store_val):
         assert store_mode != self.IMMEDIATE, 'cannot save to an immediate'
         if store_mode == 0:
@@ -73,32 +73,32 @@ class IntCode:
             state.registers[state.relative_base + store_pos] = store_val
 
     def add(self, state, modes):
-        left, right, store = self.get_parameters(state, 1, 4)
+        left, right, store = get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, (self.parse_parameter(state, left, left_mode)
                                               + self.parse_parameter(state, right, right_mode)))
         return 4
 
     def multiply(self, state, modes):
-        left, right, store = self.get_parameters(state, 1, 4)
+        left, right, store = get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, (self.parse_parameter(state, left, left_mode)
                                               * self.parse_parameter(state, right, right_mode)))
         return 4
 
     def store_input(self, state, input_val, modes):
-        store = self.get_parameters(state, 1)
+        store = get_parameters(state, 1)
         self.store(state, store, modes[0], input_val)
         return 2
 
     def send_output(self, state, modes):
         immediate, _, _ = modes
-        parameter = self.get_parameters(state, 1)
+        parameter = get_parameters(state, 1)
         state.output.append(self.parse_parameter(state, parameter, immediate))
         return 2
 
     def jump_if_true(self, state, modes):
-        non_zero, jump = self.get_parameters(state, 1, 3)
+        non_zero, jump = get_parameters(state, 1, 3)
         nz_mode, jmp_mode, _ = modes
         if self.parse_parameter(state, non_zero, nz_mode):
             state.instruction_pointer = self.parse_parameter(state, jump, jmp_mode)
@@ -106,7 +106,7 @@ class IntCode:
         return 3
 
     def jump_if_false(self, state, modes):
-        non_zero, jump = self.get_parameters(state, 1, 3)
+        non_zero, jump = get_parameters(state, 1, 3)
         nz_mode, jmp_mode, _ = modes
         if self.parse_parameter(state, non_zero, nz_mode):
             return 3
@@ -114,7 +114,7 @@ class IntCode:
         return 0
 
     def less_than(self, state, modes):
-        left, right, store = self.get_parameters(state, 1, 4)
+        left, right, store = get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, 1 if (
             self.parse_parameter(state, left, left_mode)
@@ -122,7 +122,7 @@ class IntCode:
         return 4
 
     def equals(self, state, modes):
-        left, right, store = self.get_parameters(state, 1, 4)
+        left, right, store = get_parameters(state, 1, 4)
         left_mode, right_mode, store_mode = modes
         self.store(state, store, store_mode, 1 if (
             self.parse_parameter(state, left, left_mode)
@@ -130,7 +130,7 @@ class IntCode:
         return 4
 
     def adjust_relative_base(self, state, modes):
-        parameter = self.get_parameters(state, 1)
+        parameter = get_parameters(state, 1)
         mode, _, _ = modes
         state.relative_base += self.parse_parameter(state, parameter, mode)
         return 2

@@ -1,29 +1,31 @@
-from aoc2019.day14.fuel import Recipes
+from aoc2019.day14.fuel import Equations
 
 def test_sample1():
-    recipes = Recipes('day14/sample1.txt')
-    assert recipes.ore_for_fuel() == 31
+    equations = Equations('sample1.txt')
+    assert equations.minimum_ore() == 31
 
 def test_sample2():
-    recipes = Recipes('day14/sample2.txt')
-    assert recipes.ore_for_fuel() == 165
+    reactions = Equations('sample2.txt')
+    assert reactions.minimum_ore() == 165
 
 def test_sample3():
-    recipes = Recipes('day14/sample3.txt')
-    assert recipes.ore_for_fuel() == 13312
+    reactions = Equations('sample3.txt')
+    assert reactions.minimum_ore() == 13312
 
 def test_sample4():
-    recipes = Recipes('day14/sample4.txt')
-    assert recipes.ore_for_fuel() == 180697
+    reactions = Equations('sample4.txt')
+    #off by one reaction of MNCFX
+    assert reactions.minimum_ore() == 180697
 
 def test_sample5():
-    recipes = Recipes('day14/sample5.txt')
-    assert recipes.ore_for_fuel() == 2210736
+    reactions = Equations('sample5.txt')
+    #off by one reaction of BHXH
+    assert reactions.minimum_ore() == 2210736
 
 def test_hint1():
-    recipes = Recipes('day14/hint1.txt')
-    assert recipes.ore_for_fuel() == 1
+    reactions = Equations('hint1.txt')
+    assert reactions.minimum_ore() == 1
 
 def test_hint2():
-    recipes = Recipes('day14/hint2.txt')
-    assert recipes.ore_for_fuel() == 20
+    reactions = Equations('hint2.txt')
+    assert reactions.minimum_ore() == 20

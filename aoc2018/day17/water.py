@@ -120,11 +120,12 @@ def find_bounds(lines):
     res[COL][MAX] += 1
     return res
 
-SAMPLE = Buckets('sample.txt')
-SAMPLE.pour()
-print(SAMPLE)
-assert SAMPLE.count_water() == 57
-PROBLEM = Buckets('input.txt')
-PROBLEM.pour()
-print(PROBLEM)
-utils.pretty_print_answer(1, PROBLEM.count_water())
+def main():
+    problem = Buckets('input.txt')
+    problem.pour()
+    print(problem)
+    utils.pretty_print_answer(1, problem.count_water())
+
+
+if __name__ == '__main__':
+    main()

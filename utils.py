@@ -7,10 +7,12 @@ def manhattan_distance(loc1, loc2):
 def pretty_print_answer(part, answer):
     print('Answer to part {num}: {ans}'.format(num=part, ans=answer))
 
-def read_lines(file_name):
+def read_lines(file_name, is_strip=True):
     file = open(file_name)
-    lines = [s.strip() for s in file.readlines()]
+    lines = [s for s in file.readlines()]
     file.close()
+    if is_strip:
+        lines = [s.strip for s in lines]
     return lines
 
 def translate_to_chars(ascii_vals):

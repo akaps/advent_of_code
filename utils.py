@@ -12,7 +12,7 @@ def read_lines(file_name, is_strip=True):
     lines = [s for s in file.readlines()]
     file.close()
     if is_strip:
-        lines = [s.strip for s in lines]
+        lines = [s.strip() for s in lines]
     return lines
 
 def translate_to_chars(ascii_vals):

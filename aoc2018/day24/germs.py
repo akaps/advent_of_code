@@ -2,10 +2,29 @@ import math
 import re
 import utils
 
-DETAILS_REGEX = r'(?P<amount>\d+) units each with (?P<hit_points>\d+) hit points (?P<modifiers>\(.*?\) )?with an attack that does (?P<damage_amt>\d+) (?P<damage_type>\w*) damage at initiative (?P<initiative>\d+)'
+UNITS_REGEX = r'(?P<amount>\d+) units '
+HIT_POINTS_REGEX = r'each with (?P<hit_points>\d+) hit points '
+MODIFIERS_REGEX = r'(?P<modifiers>\(.*?\) )?'
+ATTACK_DAMAGE_REGEX = r'with an attack that does (?P<damage_amt>\d+) '
+DAMAGE_TYPE_REGEX = r'(?P<damage_type>\w*) damage '
+INITIATIVE_REGEX = r'at initiative (?P<initiative>\d+)'
+DETAILS = [
+    UNITS_REGEX,
+    HIT_POINTS_REGEX,
+    MODIFIERS_REGEX,
+    ATTACK_DAMAGE_REGEX,
+    DAMAGE_TYPE_REGEX,
+    INITIATIVE_REGEX
+]
+DETAILS_REGEX = ''.join(DETAILS)
 
 IMMUNE = 'Immune System'
 INFECT = 'Infection'
+
+COMMA = ','
+SEMI_COLON = ';'
+COLON = ':'
+TO_SPLIT = ' to '
 
 class Group:
     def __init__(self, details):
@@ -22,13 +41,13 @@ class Group:
 
     def set_modifiers(self, modifiers):
         if modifiers:
-            modifiers = modifiers.strip()[1:-1].split(';')
+            modifiers = modifiers.strip()[1:-1].split(SEMI_COLON)
             for modifier in modifiers:
-                modifier_type, types = modifier.split(' to ')
+                modifier_type, types = modifier.split(TO_SPLIT)
                 if 'immune' in modifier_type:
-                    self.immunities = types.split(',')
+                    self.immunities = types.split(COMMA)
                 elif 'weak' in modifier_type:
-                    self.weaknesses = types.split(',')
+                    self.weaknesses = types.split(COMMA)
 
     def effective_power(self):
         return self.attack_damage * self.num_units
@@ -47,14 +66,15 @@ class Group:
         self.num_units = math.ceil(total_health / self.hit_points) if total_health > 0 else 0
 
     def pick_target(self, groups):
-        target_damage = math.inf
+        target = None
+        target_damage = 0
         target_name = None
         target_power = math.inf
         target_initiative = 0
         for name, group in groups:
             damage = group.calculate_damage(self)
             effective_power = group.effective_power()
-            if damage < target_damage:
+            if damage > target_damage:
                 target_damage = damage
                 target_name = name
                 target_power = effective_power
@@ -64,7 +84,9 @@ class Group:
                 target_name = name
                 target_power = effective_power
                 target_initiative = group.initiative
-            elif damage == target_damage and effective_power == target_power and group.initiative > target_initiative:
+            elif (damage == target_damage
+                  and effective_power == target_power
+                  and group.initiative > target_initiative):
                 target_damage = damage
                 target_name = name
                 target_power = effective_power
@@ -81,13 +103,13 @@ class Simulation:
         current_army = None
         counter = 1
         for line in lines:
-            if ':' in line:
+            if COLON in line:
                 counter = 1
-                current_army = line
+                current_army = line[:-1]
             elif not line:
                 continue
             else:
-                group_name = current_army + str(counter)
+                group_name = '{name} {count}'.format(name=current_army, count=counter)
                 self.groups[group_name] = Group(line)
                 counter += 1
 
@@ -102,16 +124,9 @@ class Simulation:
 
     def selection_phase(self):
         selections = {}
-        power_list = sorted(self.groups.items(), key=lambda x: x[1].effective_power())
-        immunes = []
-        infections = []
-        for key, val in self.groups.items():
-            if IMMUNE in key:
-                immunes.append((key, val))
-            elif INFECT in key:
-                infections.append((key, val))
-            else:
-                assert False, 'Unexpected key name {0}'.format(key)
+        power_list = self.decreasing_power_list()
+        immunes = self.get_group(IMMUNE)
+        infections = self.get_group(INFECT)
         for key, val in power_list:
             next_target = None
             if IMMUNE in key:
@@ -120,11 +135,28 @@ class Simulation:
                 next_target = val.pick_target(immunes)
             if next_target:
                 selections[key] = next_target
-                if next_target in immunes:
-                    immunes.remove(next_target)
-                if next_target in infections:
-                    infections.remove(next_target)
+                self.remove_target(immunes, infections, next_target)
         return selections
+
+    def remove_target(self, immunes, infections, next_target):
+        target = (next_target, self.groups[next_target])
+        if target in immunes:
+            immunes.remove(target)
+        elif target in infections:
+            infections.remove(target)
+        else:
+            assert False, 'Did not remove {target}'.format(target=next_target)
+
+    def decreasing_power_list(self):
+        return sorted(self.groups.items(), key=lambda x: -x[1].effective_power())
+
+    def get_group(self, group_name):
+        result = []
+        for key, val in self.groups.items():
+            if group_name in key:
+                result.append((key, val))
+        assert result, 'Generated empty list for group {0}'.format(group_name)
+        return result
 
     def attack_phase(self, selections):
         initiative_list = sorted(self.groups.items(), key=lambda x: -x[1].initiative)

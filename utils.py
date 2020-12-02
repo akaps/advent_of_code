@@ -14,7 +14,7 @@ def read_lines(file_name, is_strip=True):
     return lines
 
 def split_line(regex, line):
-    assert re.match(regex, line), 'No match for {regex} in {line}'
+    assert re.match(regex, line), 'No match for "{regex}" in "{line}"'.format(regex=regex, line=line)
     return re.match(regex, line).groups()
 
 #Vector analysis

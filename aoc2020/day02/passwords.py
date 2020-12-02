@@ -16,12 +16,7 @@ def is_valid_pt2(string):
     low, high, letter, password = utils.split_line(REGEX, string)
     low = int(low) - 1
     high = int(high) - 1
-    count = 0
-    if password[low] == letter:
-        count += 1
-    if password[high] == letter:
-        count += 1
-    return count == 1
+    return (password[low] == letter) ^ (password[high] == letter)
 
 def part_1(lines):
     assert is_valid_pt1('1-3 a: abcde')

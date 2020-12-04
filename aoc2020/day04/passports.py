@@ -99,8 +99,6 @@ def validate_passports(passports):
 
 def main():
     passports = read_passports('input.txt')
-    assert passports[0].is_valid()
-    assert not passports[1].is_valid()
     passports = passports_with_fields(passports)
     utils.pretty_print_answer(1, len(passports))
 

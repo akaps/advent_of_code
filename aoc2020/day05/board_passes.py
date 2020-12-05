@@ -28,13 +28,16 @@ def generate_seat(string):
     return 8 * row_high + col_high
 
 def find_gap(seats):
-    for index, val in enumerate(seats):
-        if seats[index + 1] != val +1:
-            return seats[index] + 1
+    for index in range(len(seats) - 1):
+        expected = seats[index] + 1
+        if seats[index + 1] != expected:
+            return expected
+    assert False, 'Unreachable'
+    return -1
 
 def main():
     seats = []
-    lines =utils.read_lines('input.txt')
+    lines = utils.read_lines('input.txt')
     for line in lines:
         seats.append(generate_seat(line))
     seats.sort()

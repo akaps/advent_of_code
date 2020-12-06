@@ -1,6 +1,7 @@
 import utils
 
-def get_forms(lines):
+def get_forms(file_name):
+    lines = utils.read_lines(file_name)
     forms = []
     current_set = set()
     while lines:
@@ -13,7 +14,8 @@ def get_forms(lines):
     forms.append(current_set)
     return forms
 
-def get_intersection_forms(lines):
+def get_intersection_forms(file_name):
+    lines = utils.read_lines(file_name)
     forms = []
     groups = '\n'.join(lines).split('\n\n')
     for group in groups:
@@ -29,34 +31,22 @@ def get_intersection_forms(lines):
                 current_set = set.intersection(current_set, set(group[i]))
                 print(current_set)
             print('ended with', current_set)
-            if current_set:
-                forms.append(current_set)
+            forms.append(current_set)
     print(forms)
     return forms
 
 def yes_answers(forms):
     total = 0
     for form in forms:
-        total += len(form)
+        if form:
+            total += len(form)
     return total
 
 def main():
-    lines = utils.read_lines('sample.txt')
-    forms = get_forms(lines)
-    assert len(forms) == 5
-    assert yes_answers(forms) == 11
-
-    lines = utils.read_lines('input.txt')
-    forms = get_forms(lines)
+    forms = get_forms('input.txt')
     utils.pretty_print_answer(1, yes_answers(forms))
 
-    lines = utils.read_lines('sample.txt')
-    forms = get_intersection_forms(lines)
-    print(forms)
-    assert yes_answers(forms) == 6
-
-    lines = utils.read_lines('input.txt')
-    forms = get_intersection_forms(lines)
+    forms = get_intersection_forms('input.txt')
     utils.pretty_print_answer(2, yes_answers(forms))
 
 if __name__ == "__main__":

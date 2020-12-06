@@ -13,6 +13,27 @@ def read_lines(file_name, is_strip=True):
         lines = [s.strip() for s in lines]
     return lines
 
+def read_groups(file_name):
+    lines = read_lines(file_name)
+    result = []
+    current_group = []
+    while lines:
+        line = lines.pop(0)
+        if line:
+            current_group.append(line)
+        else:
+            result.append(current_group)
+            current_group = []
+    result.append(current_group)
+    return result
+
+def read_matrix(file_name):
+    lines = read_lines(file_name, is_strip=False)
+    result = []
+    for line in lines:
+        result.append(list(line))
+    return result
+
 def split_line(regex, line):
     assert re.match(regex, line), 'No match for "{regex}" in "{line}"'.format(regex=regex, line=line)
     return re.match(regex, line).groups()

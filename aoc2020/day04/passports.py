@@ -68,19 +68,15 @@ class Passport:
 
 def read_passports(file_name):
     passports = []
-    lines = utils.read_lines(file_name)
-    next_passport = Passport()
-    while lines:
-        next_line = lines.pop(0)
-        if next_line:
-            pairs = next_line.split(' ')
+    raw_passports = utils.read_groups(file_name)
+    for raw in raw_passports:
+        next_passport = Passport()
+        for line in raw:
+            pairs = line.split(' ')
             for pair in pairs:
                 key, val = pair.split(':')
                 next_passport.add_field(key, val)
-        else:
-            passports.append(next_passport)
-            next_passport = Passport()
-    passports.append(next_passport)
+        passports.append(next_passport)
     return passports
 
 def passports_with_fields(passports):

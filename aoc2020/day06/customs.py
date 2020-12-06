@@ -23,26 +23,23 @@ def get_yes_answers(forms):
         result.append(current_set)
     return result
 
-def get_intersection_forms(file_name):
-    lines = utils.read_lines(file_name)
-    forms = []
-    groups = '\n'.join(lines).split('\n\n')
-    for group in groups:
-        group = group.split('\n')
-        print('processing', group)
-        if len(group) == 1:
-            forms.append(set(group[0]))
+def get_intersection_forms(forms):
+    result = []
+    for family in forms:
+        print('processing', family)
+        if len(family) == 1:
+            result.append(family[0])
             print('easy, one item')
         else:
-            current_set = set.intersection(set(group[0]), set(group[1]))
+            current_set = set.intersection(family[0], family[1])
             print(current_set)
-            for i in range(2, len(group)):
-                current_set = set.intersection(current_set, set(group[i]))
+            for i in range(2, len(family)):
+                current_set = set.intersection(current_set, family[i])
                 print(current_set)
             print('ended with', current_set)
-            forms.append(current_set)
-    print(forms)
-    return forms
+            result.append(current_set)
+    print(result)
+    return result
 
 def yes_total(forms):
     total = 0
@@ -56,8 +53,8 @@ def main():
     yes_answers = get_yes_answers(forms)
     utils.pretty_print_answer(1, yes_total(yes_answers))
 
-    forms = get_intersection_forms('input.txt')
-    utils.pretty_print_answer(2, yes_total(forms))
+    yes_intersect = get_intersection_forms(forms)
+    utils.pretty_print_answer(2, yes_total(yes_intersect))
 
 if __name__ == "__main__":
     main()

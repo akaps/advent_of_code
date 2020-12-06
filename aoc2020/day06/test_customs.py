@@ -10,5 +10,5 @@ def test_part_1():
 def test_part_2():
     forms = customs.get_forms('sample.txt')
     assert len(forms) == 5
-    forms = customs.get_intersection_forms('sample.txt')
+    forms = customs.get_intersection_forms(forms)
     assert customs.yes_total(forms) == 6

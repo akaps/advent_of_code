@@ -26,19 +26,13 @@ def get_yes_answers(forms):
 def get_intersection_forms(forms):
     result = []
     for family in forms:
-        print('processing', family)
         if len(family) == 1:
             result.append(family[0])
-            print('easy, one item')
         else:
             current_set = set.intersection(family[0], family[1])
-            print(current_set)
-            for i in range(2, len(family)):
-                current_set = set.intersection(current_set, family[i])
-                print(current_set)
-            print('ended with', current_set)
+            for individual in family:
+                current_set = set.intersection(current_set, individual)
             result.append(current_set)
-    print(result)
     return result
 
 def yes_total(forms):

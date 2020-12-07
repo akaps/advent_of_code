@@ -11,37 +11,32 @@ BAG_SEPERATOR = ' bag, '
 COMMA = ', '
 NO_BAGS = 'no other bags'
 
-class BagDetails:
-    def __init__(self, contained_bags):
-        self.bags = {}
-        if contained_bags != NO_BAGS:
-            bags = contained_bags.split(COMMA)
-            for bag in bags:
-                count, color = re.match(BAG_REGEX, bag).groups()
-                self.bags[color] = int(count)
+def contained_bags(contained_string):
+    bags = {}
+    if contained_string != NO_BAGS:
+        contained = contained_string.split(COMMA)
+        for bag in contained:
+            count, color = re.match(BAG_REGEX, bag).groups()
+            bags[color] = int(count)
+    return bags
 
-class BagRules:
+class Bags:
     def __init__(self, file_name):
         self.rules = defaultdict(lambda: [])
         lines = utils.read_lines(file_name)
         for line in lines:
             groups = re.match(RULES_REGEX, line)
-            self.rules[groups['container']] = BagDetails(groups['contained'])
+            self.rules[groups['container']] = contained_bags(groups['contained'])
 
     def contain_count(self, goal_color):
         count = 0
         to_process = [goal_color]
         visited = []
         while to_process:
-            # print('current count: ', count)
-            #print('to process: ', to_process)
-            #print('visited: ', visited)
             processing_color = to_process.pop(0)
-            # print('processing: ', processing_color)
             for container_color, contained in self.rules.items():
-                for contained_color in contained.bags.keys():
+                for contained_color in contained.keys():
                     if container_color not in to_process and container_color not in visited and contained_color == processing_color:
-                        # print('found {bag} can hold {color}'.format(bag=container_color, color=processing_color))
                         count += 1
                         to_process.append(container_color)
             visited.append(processing_color)
@@ -54,12 +49,12 @@ class BagRules:
             processing_color, process_count = to_process.pop(0)
             total += process_count
             contained = self.rules[processing_color]
-            for bag_color, count in contained.bags.items():
+            for bag_color, count in contained.items():
                 to_process.append((bag_color, process_count * count))
         return total
 
 def main():
-    rules = BagRules('input.txt')
+    rules = Bags('input.txt')
     count = rules.contain_count(BAG)
     utils.pretty_print_answer(1, count)
 

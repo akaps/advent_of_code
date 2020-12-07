@@ -27,6 +27,10 @@ def test_sample_black():
     rules = BagRules('sample.txt')
     assert rules.contain_count('dotted black') == 7
 
-def test_sample_blue():
+def test_sample_count_bags():
     rules = BagRules('sample.txt')
-    assert rules.contain_count('faded blue') == 10
+    assert rules.count_bags('shiny gold') == 32
+
+def test_saample_count_bags_2():
+    rules = BagRules('sample2.txt')
+    assert rules.count_bags('shiny gold') == 126

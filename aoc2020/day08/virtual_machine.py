@@ -1,5 +1,6 @@
 from collections import defaultdict
 import re
+import copy
 import utils
 
 ACC = 'acc'
@@ -7,65 +8,61 @@ JUMP = 'jmp'
 NOP = 'nop'
 
 INSTRUCTION_REGEX = r'(?P<op>acc|jmp|nop) (?P<number>(\+|-)\d+)'
-class VM:
-    def __init__(self, file_name):
-        self.instructions = utils.read_lines(file_name)
 
-    def run_til_repeat(self):
-        instruction_pointer = 0
-        accumulator = 0
-        ips = defaultdict(lambda: False)
-        infinite = False
-        while instruction_pointer < len(self.instructions) and not ips[instruction_pointer]:
-            ips[instruction_pointer] = True
-            groups = re.match(INSTRUCTION_REGEX, self.instructions[instruction_pointer]).groups()
-            opcode = groups[0]
-            value = int(groups[1])
-            if opcode == ACC:
-                accumulator += value
-                instruction_pointer += 1
-            elif opcode == JUMP:
-                instruction_pointer += value
-            elif opcode == NOP:
-                instruction_pointer += 1
-            else:
-                assert False, 'Unexpected opcode {opcode}'.format(opcode=opcode)
-            if instruction_pointer in ips:
-                    print('operation caused us to repeat', opcode, value)
-                    print('repetition found at ', instruction_pointer)
-                    infinite = True
-        print('furthest point reached', max(ips.keys()))
-        return accumulator, infinite
+def run_til_repeat(instructions):
+    instruction_pointer = 0
+    accumulator = 0
+    ips = defaultdict(lambda: False)
+    infinite = False
+    while instruction_pointer < len(instructions) and not ips[instruction_pointer]:
+        ips[instruction_pointer] = True
+        groups = re.match(INSTRUCTION_REGEX, instructions[instruction_pointer]).groups()
+        opcode = groups[0]
+        value = int(groups[1])
+        if opcode == ACC:
+            accumulator += value
+            instruction_pointer += 1
+        elif opcode == JUMP:
+            instruction_pointer += value
+        elif opcode == NOP:
+            instruction_pointer += 1
+        else:
+            assert False, 'Unexpected opcode {opcode}'.format(opcode=opcode)
+        if instruction_pointer in ips:
+                print('operation caused us to repeat', opcode, value)
+                print('repetition found at ', instruction_pointer)
+                infinite = True
+    print('furthest point reached', max(ips.keys()))
+    return accumulator, infinite
 
-    def find_non_accs(self):
-        result = []
-        for index, line in enumerate(self.instructions):
-            groups = re.match(INSTRUCTION_REGEX, line).groups()
-            if groups[0] != ACC:
-                result.append((index, line))
-        return result
+def find_non_accs(instructions):
+    result = []
+    for index, line in enumerate(instructions):
+        groups = re.match(INSTRUCTION_REGEX, line).groups()
+        if groups[0] != ACC:
+            result.append((index, line))
+    return result
 
-def part_2(virtual_machine):
-    non_accs = virtual_machine.find_non_accs()
+def part_2(instructions):
+    non_accs = find_non_accs(instructions)
     non_accs.reverse()
     for index, op in non_accs:
-        negation = None
+        modified_instructions = copy.deepcopy(instructions)
         if JUMP in op:
-            negation = op.replace(JUMP, NOP)
+            modified_instructions[index] = op.replace(JUMP, NOP)
         else:
-            negation = op.replace(NOP, JUMP)
-        virtual_machine.instructions[index] = negation
-        answer, infinite = virtual_machine.run_til_repeat()
+            modified_instructions[index] = op.replace(NOP, JUMP)
+        answer, infinite = run_til_repeat(modified_instructions)
         if not infinite:
             print('found solution inverting', index, op)
             return answer
-        virtual_machine.instructions[index] = op
+    assert False, 'Did not find answer to parat 2'
     return -1
 
 def main():
-    virtual_machine = VM('input.txt')
-    utils.pretty_print_answer(1, virtual_machine.run_til_repeat()[0])
-    utils.pretty_print_answer(2, part_2(virtual_machine))
+    instructions = utils.read_lines('input.txt')
+    utils.pretty_print_answer(1, run_til_repeat(instructions)[0])
+    utils.pretty_print_answer(2, part_2(instructions))
 
 if __name__ == "__main__":
     main()

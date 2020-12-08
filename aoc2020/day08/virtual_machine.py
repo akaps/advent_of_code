@@ -9,7 +9,7 @@ NOP = 'nop'
 
 INSTRUCTION_REGEX = r'(?P<op>acc|jmp|nop) (?P<number>(\+|-)\d+)'
 
-def run_til_repeat(instructions):
+def run_til_repeat(instructions, debug=False):
     instruction_pointer = 0
     accumulator = 0
     ips = defaultdict(lambda: False)
@@ -29,10 +29,12 @@ def run_til_repeat(instructions):
         else:
             assert False, 'Unexpected opcode {opcode}'.format(opcode=opcode)
         if instruction_pointer in ips:
-                print('operation caused us to repeat', opcode, value)
-                print('repetition found at ', instruction_pointer)
                 infinite = True
-    print('furthest point reached', max(ips.keys()))
+                if debug:
+                    print('operation caused us to repeat', opcode, value)
+                    print('repetition found at ', instruction_pointer)
+    if debug:
+        print('furthest point reached', max(ips.keys()))
     return accumulator, infinite
 
 def find_non_accs(instructions):
@@ -43,18 +45,18 @@ def find_non_accs(instructions):
             result.append((index, line))
     return result
 
-def part_2(instructions):
+def part_2(instructions, debug=False):
     non_accs = find_non_accs(instructions)
     non_accs.reverse()
-    for index, op in non_accs:
+    for index, opcode in non_accs:
         modified_instructions = copy.deepcopy(instructions)
-        if JUMP in op:
-            modified_instructions[index] = op.replace(JUMP, NOP)
+        if JUMP in opcode:
+            modified_instructions[index] = opcode.replace(JUMP, NOP)
         else:
-            modified_instructions[index] = op.replace(NOP, JUMP)
-        answer, infinite = run_til_repeat(modified_instructions)
+            modified_instructions[index] = opcode.replace(NOP, JUMP)
+        answer, infinite = run_til_repeat(modified_instructions, debug)
         if not infinite:
-            print('found solution inverting', index, op)
+            print('found solution inverting', index, opcode)
             return answer
     assert False, 'Did not find answer to parat 2'
     return -1

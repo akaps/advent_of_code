@@ -58,7 +58,7 @@ def part_2(instructions, debug=False):
         if not infinite:
             print('found solution inverting', index, opcode)
             return answer
-    assert False, 'Did not find answer to parat 2'
+    assert False, 'Did not find answer to part 2'
     return -1
 
 def main():

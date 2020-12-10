@@ -1,70 +1,54 @@
 from collections import defaultdict
-import re
 import copy
 import utils
+from aoc2020.virtual_machine import VirtualMachine, JUMP, NOP, ACC, OPCODE
 
-ACC = 'acc'
-JUMP = 'jmp'
-NOP = 'nop'
-
-INSTRUCTION_REGEX = r'(?P<op>acc|jmp|nop) (?P<number>(\+|-)\d+)'
-
-def run_til_repeat(instructions, debug=False):
+def run_til_repeat(virtual_machine):
     instruction_pointer = 0
     accumulator = 0
     ips = defaultdict(lambda: False)
     infinite = False
-    while instruction_pointer < len(instructions) and not ips[instruction_pointer]:
+    while instruction_pointer < len(virtual_machine.instructions) and not ips[instruction_pointer]:
         ips[instruction_pointer] = True
-        groups = re.match(INSTRUCTION_REGEX, instructions[instruction_pointer]).groups()
-        opcode = groups[0]
-        value = int(groups[1])
-        if opcode == ACC:
-            accumulator += value
-            instruction_pointer += 1
-        elif opcode == JUMP:
-            instruction_pointer += value
-        elif opcode == NOP:
-            instruction_pointer += 1
-        else:
-            assert False, 'Unexpected opcode {opcode}'.format(opcode=opcode)
+        instruction = virtual_machine.instructions[instruction_pointer]
+        accumulator, instruction_pointer = virtual_machine.execute(
+            instruction, accumulator, instruction_pointer)
         if instruction_pointer in ips:
             infinite = True
-            if debug:
-                print('operation caused us to repeat', opcode, value)
-                print('repetition found at ', instruction_pointer)
-    if debug:
-        print('furthest point reached', max(ips.keys()))
     return accumulator, infinite
 
 def find_non_accs(instructions):
     result = []
-    for index, line in enumerate(instructions):
-        groups = re.match(INSTRUCTION_REGEX, line).groups()
-        if groups[0] != ACC:
-            result.append((index, line))
+    for index, instruction in enumerate(instructions):
+        if instruction[OPCODE] != ACC:
+            result.append((index, instruction))
     return result
 
-def part_2(instructions, debug=False):
-    non_accs = find_non_accs(instructions)
+def part_2(virtual_machine):
+    old_instructions = copy.deepcopy(virtual_machine.instructions)
+    non_accs = find_non_accs(virtual_machine.instructions)
     non_accs.reverse()
-    for index, opcode in non_accs:
-        modified_instructions = copy.deepcopy(instructions)
-        if JUMP in opcode:
-            modified_instructions[index] = opcode.replace(JUMP, NOP)
+    for index, instruction in non_accs:
+        modified_instructions = copy.deepcopy(virtual_machine.instructions)
+        if JUMP in instruction[OPCODE]:
+            modified_instructions[index][OPCODE] = NOP
+        elif NOP in instruction[OPCODE]:
+            modified_instructions[index][OPCODE] = JUMP
         else:
-            modified_instructions[index] = opcode.replace(NOP, JUMP)
-        answer, infinite = run_til_repeat(modified_instructions, debug)
+            assert False, 'Unexpected opcode {op}'.format(op=instruction)
+        virtual_machine.instructions = modified_instructions
+        answer, infinite = run_til_repeat(virtual_machine)
         if not infinite:
-            print('found solution inverting', index, opcode)
+            print('found solution inverting', index, instruction)
             return answer
+        virtual_machine.instructions = old_instructions
     assert False, 'Did not find answer to part 2'
     return -1
 
 def main():
-    instructions = utils.read_lines('aoc2020/day08/input.txt')
-    utils.pretty_print_answer(1, run_til_repeat(instructions)[0])
-    utils.pretty_print_answer(2, part_2(instructions))
+    virtual_machine = VirtualMachine('aoc2020/day08/input.txt')
+    utils.pretty_print_answer(1, run_til_repeat(virtual_machine)[0])
+    utils.pretty_print_answer(2, part_2(virtual_machine))
 
 if __name__ == "__main__":
     main()

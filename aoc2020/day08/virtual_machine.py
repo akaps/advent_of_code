@@ -29,10 +29,10 @@ def run_til_repeat(instructions, debug=False):
         else:
             assert False, 'Unexpected opcode {opcode}'.format(opcode=opcode)
         if instruction_pointer in ips:
-                infinite = True
-                if debug:
-                    print('operation caused us to repeat', opcode, value)
-                    print('repetition found at ', instruction_pointer)
+            infinite = True
+            if debug:
+                print('operation caused us to repeat', opcode, value)
+                print('repetition found at ', instruction_pointer)
     if debug:
         print('furthest point reached', max(ips.keys()))
     return accumulator, infinite
@@ -62,7 +62,7 @@ def part_2(instructions, debug=False):
     return -1
 
 def main():
-    instructions = utils.read_lines('input.txt')
+    instructions = utils.read_lines('aoc2020/day08/input.txt')
     utils.pretty_print_answer(1, run_til_repeat(instructions)[0])
     utils.pretty_print_answer(2, part_2(instructions))
 

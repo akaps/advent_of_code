@@ -2,9 +2,9 @@ import utils
 
 class XmasEncryption:
     def __init__(self, file_name):
-        lines = [int(x) for x in utils.read_lines(file_name)]
-        self.preamble = lines[:25]
-        self.to_process = lines[25:]
+        self.lines = [int(x) for x in utils.read_lines(file_name)]
+        self.preamble = self.lines[:25]
+        self.to_process = self.lines[25:]
 
     def get_window(self):
         window = set()
@@ -28,9 +28,24 @@ class XmasEncryption:
             self.adjust_window(number)
         return -1
 
+    def find_weakness(self, weakness):
+        for window_length in range(2, len(self.lines)):
+            for window_offset in range(0, len(self.lines) - window_length):
+                run = self.lines[window_offset: window_offset + window_length]
+                candidate = sum(run)
+                if candidate == weakness:
+                    print(candidate)
+                    print(run)
+                    run.sort()
+                    print(run)
+                    return run[0] + run[-1]
+        return -1
+
 def main():
     encryption = XmasEncryption('aoc2020/day09/input.txt')
-    utils.pretty_print_answer(1, encryption.find_part_1())
+    weakness = encryption.find_part_1()
+    utils.pretty_print_answer(1, weakness)
+    utils.pretty_print_answer(2, encryption.find_weakness(weakness))
 
 if __name__ == '__main__':
     main()

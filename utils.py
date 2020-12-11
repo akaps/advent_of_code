@@ -28,10 +28,10 @@ def read_groups(file_name):
     return result
 
 def read_matrix(file_name):
-    lines = read_lines(file_name, is_strip=False)
+    lines = read_lines(file_name)
     result = []
     for line in lines:
-        result.append(list(line))
+        result.append(list(line.strip()))
     return result
 
 def split_line(regex, line):

@@ -22,8 +22,8 @@ class Ship:
 
     def travel(self):
         turtle = Turtle()
-        turtle.screen.screensize(1920, 1080)
-        turtle.screen.setworldcoordinates(-2000, -2000, 2000, 2000)
+        turtle.screen.screensize(640, 480)
+        turtle.screen.setworldcoordinates(-10, -1000, 1000, 200)
         turtle.setheading(0)
         turtle.speed(0)
         for action, magnitude in self.directions:
@@ -48,7 +48,7 @@ class Ship:
     def waypoint_travel(self):
         ship = Turtle()
         ship.screen.clearscreen()
-        ship.screen.setworldcoordinates(-6232, -72653, 25112, 3791)
+        ship.screen.setworldcoordinates(-19295, -76725, 25115, 3795)
         ship.setheading(0)
         ship.speed(0)
         waypoint = Turtle()

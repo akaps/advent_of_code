@@ -2,6 +2,8 @@ import re
 from copy import deepcopy
 import utils
 
+INT_WIDTH = 36
+DEFAULT_MASK = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 SET_REGEX = r'mem\[(\d+)\] = (\d+)'
 MASK_REGEX = r'mask = ([01X]*)'
 
@@ -11,7 +13,7 @@ class Masker:
 
     def run(self):
         memory = {}
-        mask = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        mask = DEFAULT_MASK
         for instruction in self.instructions:
             if re.match(SET_REGEX, instruction):
                 groups = re.match(SET_REGEX, instruction).groups()
@@ -26,7 +28,7 @@ class Masker:
 
     def run_v2(self):
         memory = {}
-        mask = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        mask = DEFAULT_MASK
         for instruction in self.instructions:
             if re.match(SET_REGEX, instruction):
                 groups = re.match(SET_REGEX, instruction).groups()
@@ -41,8 +43,8 @@ class Masker:
         return sum(memory.values())
 
 def apply_mask_v2(value, mask):
-    addresses = [list('{val:036b}'.format(val=value))]
-    for i in range(36):
+    addresses = [list(convert_to_binary(value))]
+    for i in range(INT_WIDTH):
         if mask[i] == '1':
             for address in addresses:
                 address[i] = '1'
@@ -58,18 +60,24 @@ def apply_mask_v2(value, mask):
             assert mask[i] == '0', 'unexpected val {val}'.format(val=mask[i])
     result = []
     for address in addresses:
-        result.append(int(''.join(address), 2))
+        result.append(convert_to_int(address))
     return result
 
 def apply_mask(value, mask):
-    binary = list('{val:036b}'.format(val=value))
-    for i in range(36):
+    binary = convert_to_binary(value)
+    for i in range(INT_WIDTH):
         if mask[i] != 'X':
             binary[i] = mask[i]
         else:
             assert mask[i] == 'X' or mask[i] == '1', (
                 'unexpected mask value {val}'.format(val=mask[i]))
-    return int(''.join(binary), 2)
+    return convert_to_int(binary)
+
+def convert_to_binary(value):
+    return list('{val:036b}'.format(val=value))
+
+def convert_to_int(value):
+    return int(''.join(value), 2)
 
 def main():
     mask = Masker('input.txt')

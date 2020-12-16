@@ -1,5 +1,18 @@
 import utils
 
+class Ticket:
+    def __init__(self, values, rules):
+        self.values = [int(x) for x in values.split(',')]
+        self.potential_fields = {}
+        for value in self.values:
+            self.potential_fields[value] = []
+            for rule in rules:
+                if rule.is_match(value):
+                    self.potential_fields[value].append(rule.field_name)
+
+    def __repr__(self):
+        return '\n'.join([str(self.values), str(self.potential_fields)])
+
 class TicketRule:
     def __init__(self, rule_str):
         self.field_name, rest = rule_str.split(':')
@@ -18,30 +31,22 @@ def make_rules(rules_str):
         rules.append(TicketRule(rule_str))
     return rules
 
-def make_tickets(nearby_tickets):
+def make_tickets(nearby_tickets, rules):
     tickets = []
     for ticket in nearby_tickets:
-        tickets.append(make_ticket(ticket))
+        tickets.append(Ticket(ticket, rules))
     return tickets
 
-def make_ticket(ticket_str):
-    return (int(x) for x in ticket_str.split(','))
-
-def error_rate(rules, tickets):
+def error_rate(tickets):
     total = 0
     valid_tickets = []
     for ticket in tickets:
-        is_valid_ticket = True
-        for value in ticket:
-            is_valid_value = False
-            for rule in rules:
-                if rule.is_match(value):
-                    is_valid_value = True
-                    break
-            if not is_valid_value:
+        is_valid = True
+        for value in ticket.values:
+            if not ticket.potential_fields[value]:
                 total += value
-                is_valid_ticket = False
-        if is_valid_ticket:
+                is_valid = False
+        if is_valid:
             valid_tickets.append(ticket)
     return total, valid_tickets
 
@@ -54,15 +59,40 @@ def separate_fields(file_name):
     nearby_tickets = lines[input_break2 + 1:][1:]
     return definitions, my_ticket, nearby_tickets
 
+def part_2(rules, valid_tickets, my_ticket):
+    possible_fields = {}
+    for index in range(20):
+        possible_fields[index] = []
+        for rule in rules:
+            possible = True
+            for ticket in valid_tickets:
+                if not rule.is_match(ticket.values[index]):
+                    possible = False
+            if possible:
+                possible_fields[index].append(rule.field_name)
+    #print(possible_fields)
+
 def main():
     definitions, my_ticket, nearby_tickets = separate_fields('input.txt')
     rules = make_rules(definitions)
-    my_ticket = make_ticket(my_ticket[1])
-    tickets = make_tickets(nearby_tickets)
-    error, valid_tickets = error_rate(rules, tickets)
+    my_ticket = Ticket(my_ticket, rules)
+    tickets = make_tickets(nearby_tickets, rules)
+    error, valid_tickets = error_rate(tickets)
     utils.pretty_print_answer(1, error)
-    print(len(valid_tickets))
-    print(valid_tickets)
+    part_2(rules, valid_tickets, my_ticket)
+    departure_platform = my_ticket.values[5]
+    departure_date = my_ticket.values[6]
+    departure_station = my_ticket.values[10]
+    departure_track = my_ticket.values[11]
+    departure_time = my_ticket.values[16]
+    departure_location = my_ticket.values[19]
+    total = (departure_platform *
+             departure_date *
+            departure_station *
+            departure_track *
+            departure_time *
+            departure_location)
+    utils.pretty_print_answer(2, total)
 
 if __name__ == "__main__":
     main()

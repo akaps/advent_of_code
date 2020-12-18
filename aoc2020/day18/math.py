@@ -1,9 +1,5 @@
-import re
 import utils
 
-PRECEDENCE_REGEX = r'\(?([\d+ *]*)\)?'
-EXPRESSION_REGEX = r'(?P<operand>\d+) (?P<operator>[+*]) (?P<rhs>.*)'
-#(?P<operand>\d+)( (?P<operator>[+*]) (?P<next_operand>\d+))+
 OPEN_PAREN = '('
 CLOSE_PAREN = ')'
 SPACE = ' '

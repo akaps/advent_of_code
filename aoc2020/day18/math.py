@@ -6,7 +6,7 @@ SPACE = ' '
 MULT = '*'
 ADD = '+'
 
-def calculate(expression, precendence_agnostic):
+def calculate(expression, precendence_agnostic=True):
     while OPEN_PAREN in expression:
         count_parens = 1
         start_index = expression.index(OPEN_PAREN)

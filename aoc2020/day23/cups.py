@@ -1,75 +1,65 @@
 import utils
 
-class Cup:
-    def __init__(self, cup_number):
-        self.value = cup_number
-        self.next = None
-
 class Cups:
     def __init__(self, input_str, is_big=False):
         input_list = [int(x) for x in input_str]
-        self.current_cup = Cup(input_list[0])
-        runner = self.current_cup
-        self.length = 9
-        for val in input_list[1:]:
-            runner.next = Cup(val)
-            runner = runner.next
+        self.cups = {}
+        self.current_cup = input_list[0]
+        prev = self.current_cup
+        for key in input_list:
+            self.cups[prev] = key
+            prev = key
         if is_big:
-            for val in range(10, 1000001):
-                runner.next = Cup(val)
-                runner = runner.next
-            self.length = 1000000
-        runner.next = self.current_cup
+            for key in range(1000001):
+                self.cups[prev] = key
+                prev = key
+        self.cups[prev] = self.current_cup
 
     def extract(self):
         values = []
-        head = self.current_cup.next
-        runner = head
+        key = self.current_cup
         for _ in range(3):
-            values.append(runner.value)
-            runner = runner.next
-        self.current_cup.next = runner
-        return values, head
+            values.append(self.cups[key])
+            key = self.cups[key]
+        self.cups[self.current_cup] = self.cups[key]
+        return values
 
     def play_round(self):
         #pick up the next 3 cups:
-        values, extracted = self.extract()
+        values = self.extract()
         #find next value, which is current_cup.value-1
-        destination = self.current_cup.value - 1 if self.current_cup.value > 1 else self.length
+        destination = self.current_cup - 1 if self.current_cup > 1 else len(self.cups)
         while destination in values:
-            destination = destination - 1 if destination > 1 else self.length
-        runner = self.current_cup
-        while runner.value != destination:
-            runner = runner.next
+            destination = destination - 1 if destination > 1 else len(self.cups)
         #reinsert the extracted cups after the destination
-        extracted.next.next.next = runner.next
-        runner.next = extracted
+        tail = self.cups[destination]
+        for val in values:
+            self.cups[destination] = val
+            destination = val
+        self.cups[destination] = tail
         #move current cup by 1
-        self.current_cup = self.current_cup.next
+        self.current_cup = self.cups[self.current_cup]
 
     def play_game(self, num_rounds):
         for i in range(num_rounds):
-            if i % 1 == 0:
-                print('round', i)
+            if i % 100000 == 0:
+                print(i)
             self.play_round()
 
     def cup_order(self):
         result = []
-        runner = self.current_cup
-        while runner.value != 1:
-            runner = runner.next
-        runner = runner.next
-        while runner.value != 1:
-            result.append(str(runner.value))
-            runner = runner.next
-        assert len(result) == 8
-        return ' '.join(result)
+        current = self.cups[1]
+        while current != 1:
+            result.append(str(current))
+            current = self.cups[current]
+        assert len(result) == 8, \
+            'only call cup_order with is_big=False'
+        return ''.join(result)
 
     def cup_hash(self):
-        runner = self.current_cup
-        while runner.value != 1:
-            runner = runner.next
-        return runner.next.value * runner.next.next.value
+        first = self.cups[1]
+        second = self.cups[first]
+        return first * second
 
 def main():
     cups = Cups('253149867')
@@ -77,7 +67,6 @@ def main():
     utils.pretty_print_answer(1, cups.cup_order())
     cups = Cups('253149867', is_big=True)
     cups.play_game(10000000)
-    print(cups.cup_order())
     utils.pretty_print_answer(2, cups.cup_hash())
 
 if __name__ == "__main__":

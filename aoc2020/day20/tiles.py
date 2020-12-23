@@ -86,7 +86,7 @@ class Tiles:
         return product
 
 def main():
-    tiles = Tiles('aoc2020/day20/input.txt')
+    tiles = Tiles('input.txt')
     utils.pretty_print_answer(1, tiles.product_of_corners())
 
 if __name__ == "__main__":

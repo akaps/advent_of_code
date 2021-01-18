@@ -26,51 +26,35 @@ class Foods:
             self.foods.append(Food(line))
         self.allergens = self.find_allergens()
 
-    def find_allergens(self):
+    def candidate_allergens(self):
         allergens = {}
-        to_process = deepcopy(self.foods)
-        processed = []
-        # processing = True
-        while to_process:
-            print('-----')
-            print(len(to_process))
-            food = to_process.pop(0)
-            if not food.allergens:
-                print('fully processed food, can eliminate')
-                processed.append(food)
-            elif len(food.allergens) != 1:
-                print('cannot process {allergens} yet'.format(allergens=food.allergens))
-                to_process.append(food) #inefficient, but will become more effective as time goes on
-            else:
-                assert food.allergens
-                allergen = food.allergens[0]
-                print('found single known allergen', allergen)
-                candidates = set(food.ingredients)
-                for next_food in [x for x in to_process if allergen in x.allergens]:
-                    candidates.intersection_update(next_food.ingredients)
-                    next_food.allergens.remove(allergen)
-                print('before checking processed: {length}'.format(length=len(candidates)))
-                # for next_food in processed:
-                #     candidates.intersection_update(next_food.ingredients)
-                # print('after checking processed: {length}'.format(length=len(candidates)))
-                if len(candidates) == 1:
-                    answer = candidates.pop()
-                    print('{allergen} maps to {ingredient}'.format(allergen=allergen, ingredient=answer))
-                    allergens[allergen] = answer
-                    for next_food in [x for x in to_process if answer in x.ingredients]:
-                        next_food.ingredients.remove(answer)
-                    assert food not in processed
-                    processed.append(food) #is food in
+        for food in self.foods:
+            for allergen in food.allergens:
+                if allergen in allergens:
+                    allergens[allergen] &= set(food.ingredients)
                 else:
-                    print('found {candidates} but cannot select'.format(candidates=candidates))
-                    to_process.append(food)
+                    allergens[allergen] = set(food.ingredients)
+        return allergens
+
+    def find_allergens(self):
+        candidates = self.candidate_allergens()
+        to_process = list(candidates.keys())
+        allergens = {}
+        while to_process:
+            next_allergen = to_process.pop(0)
+            if len(candidates[next_allergen]) == 1:
+                ingredient = candidates[next_allergen].pop()
+                allergens[next_allergen] = ingredient
+                for other_allergen in candidates.values():
+                    other_allergen.discard(ingredient)
+            else:
+                to_process.append(next_allergen)
         return allergens
 
     def __repr__(self):
         return '\n'.join([str(x) for x in self.foods])
 
     def count_allergen_free(self):
-        print('allergens:', self.allergens)
         count = 0
         for food in self.foods:
             count += len([x for x in food.ingredients if x not in self.allergens.values()])

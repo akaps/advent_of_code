@@ -60,9 +60,18 @@ class Foods:
             count += len([x for x in food.ingredients if x not in self.allergens.values()])
         return count
 
+    def cdi_list(self):
+        ingredients = []
+        allergen_keys = list(self.allergens.keys())
+        allergen_keys.sort()
+        for key in allergen_keys:
+            ingredients.append(self.allergens[key])
+        return ','.join(ingredients)
+
 def main():
     foods = Foods('input.txt')
     utils.pretty_print_answer(1, foods.count_allergen_free())
+    utils.pretty_print_answer(2, foods.cdi_list())
 
 if __name__ == '__main__':
     main()

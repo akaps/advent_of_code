@@ -35,7 +35,7 @@ def read_matrix(file_name):
     return result
 
 def split_line(regex, line):
-    assert re.match(regex, line), 'No match for "{regex}" in "{line}"'.format(regex=regex, line=line)
+    assert re.match(regex, line), f'No match for "{regex}" in "{line}"'.format(regex=regex, line=line)
     return re.match(regex, line).groups()
 
 #Vector analysis

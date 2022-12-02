@@ -1,5 +1,7 @@
 def main():
-    lines = open('input.txt')
+    file_input = open('input.txt', 'r')
+    lines = file_input.readlines()
+    file_input.close()
     calories = []
 
     current = 0

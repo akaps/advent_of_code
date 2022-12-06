@@ -1,11 +1,10 @@
 def detect_run(input, run_length):
-    run = list(input[:run_length])
-    for i in range(run_length, len(input)):
+    run = input[:run_length]
+    for i in range(run_length + 1, len(input)):
         if len(set(run)) == run_length:
-            return i
+            return i - 1
         else:
-            run.append(input[i])
-            run.pop(0)
+            run = input[i - run_length: i]
     return -1
 
 def detect_packet(input):

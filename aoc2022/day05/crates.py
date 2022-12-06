@@ -2,6 +2,9 @@ import re
 
 regex = r'move (\d+) from (\d) to (\d)'
 
+def read_input():
+    return None
+
 def use_input():
     crates = Crates(9)
     crates.insert_crate('D', 1)

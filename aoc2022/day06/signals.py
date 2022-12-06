@@ -1,10 +1,8 @@
 def detect_run(input, run_length):
-    run_length -= 1
     run = list(input[:run_length])
     for i in range(run_length, len(input)):
-        last = input[i]
-        if last not in run and len(set(run)) == run_length:
-            return i + 1
+        if len(set(run)) == run_length:
+            return i
         else:
             run.append(input[i])
             run.pop(0)

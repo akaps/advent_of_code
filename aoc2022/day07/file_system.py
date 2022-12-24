@@ -131,11 +131,6 @@ def find_smallest_freeup(sizes):
 
 def main():
     system = FileSystem('aoc2022/day07/sample.txt')
-    sizes = system.inventory_sizes()
-    # assert sizes['/a/e'] == 584
-    # assert sizes['/a'] == 94853
-    # assert sizes['/d'] == 24933642
-    # assert sizes['/'] == 48381165
     small = sizes_under_100kb(system.sizes)
     assert small == 95437
 

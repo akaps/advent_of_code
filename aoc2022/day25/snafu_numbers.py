@@ -27,7 +27,6 @@ def decimal_to_snafu(value):
             result.append(str(quintuple))
         value //= 5
     result.reverse()
-    print(result)
     return ''.join(result)
 
 def decimal_sum(file_name):

@@ -51,7 +51,7 @@ class Bingo:
     def __init__(self, file_name):
         with open(file_name, 'r') as file:
             #number order is the first line, with an extra padding line
-            self.numbers = file.readline().split(',')
+            self.numbers = [int(number) for number in file.readline().split(',')]
             file.readline()
 
             board_lines = file.readlines()
@@ -63,11 +63,31 @@ class Bingo:
 
     def first_winning_score(self):
         for number in self.numbers:
-            number = int(number)
             for board in self.boards:
                 score = board.play(number)
                 if score > 0:
                     return number * score
+        assert False, 'NotReached'
+        return -1
+
+    def last_winning_score(self):
+        playing_boards = self.boards
+        for number in self.numbers:
+            still_playing_boards = []
+            for board in playing_boards:
+                score = board.play(number)
+                if score == 0:
+                    still_playing_boards.append(board)
+            playing_boards = still_playing_boards
+            if len(playing_boards) == 1:
+                break
+
+        assert len(playing_boards) == 1, 'expected final board'
+        #last board, still has to win to compute score
+        for number in self.numbers: #just repeat non-winning numbers for simplicity
+            score = playing_boards[0].play(number)
+            if score > 0:
+                return number * score
         assert False, 'NotReached'
         return -1
 
@@ -77,6 +97,9 @@ def main():
 
     squid_game = Bingo('aoc2021/day04/input.txt')
     print('Part 1: ', squid_game.first_winning_score())
+
+    assert 1924 == sample.last_winning_score()
+    print('Part 2: ', squid_game.last_winning_score())
 
 if __name__ == '__main__':
     main()

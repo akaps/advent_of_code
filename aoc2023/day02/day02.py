@@ -5,7 +5,7 @@ GREEN = 'green'
 BLUE = 'blue'
 
 GAME_REGEX = r'Game (\d+): (.*)$'
-CUBE_REGEX = r'(\d+) (.*)'
+CUBE_REGEX = r'(\d+) (red|green|blue)'
 SUBSET_DELIMITER = '; '
 SET_DELIMITER = ', '
 

@@ -1,77 +1,67 @@
 SPACE = '.'
 GEAR = '*'
 
-class PartNumber:
-    def __init__(self, grid:list[str], value:str, row: int, start_col: int, end_col: int):
-        self.value=int(value)
-        self.part_type = None
-        self.part_position = None
-        #is the symbol above?
-        for j in range(start_col - 1, end_col +1):
-            if self.in_range(grid, row-1, j) and grid[row - 1][j] != SPACE:
-                assert not self.part_type
-                self.part_type = grid[row - 1][j]
-                self.part_position = (row-1, j)
-        # is it left or right?
-        if self.in_range(grid, row, start_col - 1) and grid[row][start_col - 1] != SPACE:
-            assert not self.part_type
-            self.part_type = grid[row][start_col - 1]
-            self.part_position = (row, start_col - 1)
-        if self.in_range(grid, row, end_col) and grid[row][end_col] != SPACE:
-            assert not self.part_type
-            self.part_type = grid[row][end_col]
-            self.part_position = (row, end_col)
-        #is it below?
-        for j in range(start_col -1, end_col +1):
-            if self.in_range(grid, row + 1, j) and grid[row + 1][j] != SPACE:
-                assert not self.part_type
-                self.part_type = grid[row + 1][j]
-                self.part_position = (row + 1, j)
+def in_bounds(grid: list[str], row: int, col: int):
+    return row >= 0 and row < len(grid) and col >=0 and col < len(grid[row])
 
-    def in_range(self, grid: list[str], row, col):
-        return row >= 0 and row < len(grid) and col >=0 and col < len(grid[row])
+class Part:
+    def __init__(self, part_type:str):
+        self.part_type = part_type
+        self.numbers = []
 
-    def is_part(self):
-        return self.part_type is not None
+    def add_number(self, part_number: str):
+        self.numbers.append(int(part_number))
 
 class Engine:
     def __init__(self, input_file:str):
-        self.part_numbers = []
-        lines = [line.strip() for line in open(input_file).readlines()]
-        for row_index, row in enumerate(lines):
+        self.parts = {} #key: position, value, part type and associated numbers
+        grid = [line.strip() for line in open(input_file).readlines()]
+        for row_index, row in enumerate(grid):
             col_index = 0
             while col_index < len(row):
-                character = row[col_index]
-                if character != SPACE:
-                    if character.isdigit():
-                        #concatenate adjacent digits, and skip repeats
-                        number = character
-                        lookahead = col_index + 1
-                        while lookahead < len(row) and row[lookahead].isdigit():
-                            number += row[lookahead]
-                            lookahead += 1
-                        #know all about the number now, find the adjacent symbol
-                        self.part_numbers.append(PartNumber(lines, number, row_index, col_index, lookahead))
-                        #skip processed digits
-                        col_index = lookahead
-                col_index += 1
+                character = grid[row_index][col_index]
+                if character.isdigit():
+                    number = self.find_number(grid, row_index, col_index)
+                    part_location, part_type = self.find_part(grid, row_index, col_index, len(number))
+                    if part_location:
+                        if part_location not in self.parts:
+                            self.parts[part_location] = Part(part_type)
+                        self.parts[part_location].add_number(number)
+                    col_index += len(number)
+                else:
+                    col_index += 1
+
+    def find_number(self, grid: list[str], row_index: int, col_index: int):
+        end_index = col_index
+        while in_bounds(grid, row_index, end_index) and grid[row_index][end_index].isdigit():
+            end_index += 1
+        return grid[row_index][col_index:end_index]
+
+    def find_part(self, grid: list[str], row_index: int, col_index: int, number_width: int):
+        #is the symbol above?
+        candidates = []
+        candidates.extend([(row_index - 1, j) \
+                           for j in range(col_index - 1, col_index + number_width + 1)])
+        candidates.append((row_index, col_index - 1))
+        candidates.append((row_index, col_index + number_width))
+        candidates.extend([(row_index + 1, j) \
+                           for j in range(col_index - 1, col_index + number_width + 1)])
+        for x_pos, y_pos in candidates:
+                if in_bounds(grid, x_pos, y_pos) and grid[x_pos][y_pos] != SPACE:
+                    return (x_pos, y_pos), grid[x_pos][y_pos]
+        return None, None
 
     def sum_of_parts(self):
-        return sum([number.value for number in self.part_numbers if number.is_part()])
+        total = 0
+        for part in self.parts.values():
+            total += sum(part.numbers)
+        return total
 
     def sum_of_gear_ratios(self):
         total = 0
-        to_process = self.part_numbers.copy()
-        while to_process:
-            next_part = to_process.pop()
-            if next_part.part_type == GEAR:
-                location = next_part.part_position
-                #find partner gear
-                for part in to_process.copy():
-                    if part.part_position == location:
-                        total += part.value * next_part.value
-                        to_process.remove(part)
-                        break
+        for part in self.parts.values():
+            if part.part_type == GEAR and len(part.numbers) == 2:
+                total += part.numbers[0] * part.numbers[1]
         return total
 
 def main():

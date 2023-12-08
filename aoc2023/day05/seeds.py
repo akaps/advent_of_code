@@ -72,12 +72,38 @@ class SeedMaps:
                 minimum = value
         return minimum
 
+    def lowest_by_ranges(self):
+        #each seed range is a possible candidate because they map non-linearly;
+        # a range within a seed range may produce smaller values than the upper or lower bound
+        # we can check if there is a disconinuity if a range's slope is not 1
+        # if so, we have to find the find the boundary, and keep searching with those results
+        seeds = self.seeds[::2]
+        ranges = self.seeds[1::2]
+        minimum = self.seed_to_location(seeds[0])
+        for i, seed in enumerate(seeds):
+            print('next range')
+            seed_range = ranges[i]
+            minimum_location = self.seed_to_location(seed)
+            for i in range(seed, seed + seed_range):
+                if i % 1000000 == 0:
+                    print(f'{i/(seed+seed_range):.2f} to go')
+                candidate = self.seed_to_location(i)
+                if candidate < minimum_location:
+                    print(i)
+                    minimum_location = candidate
+            if minimum_location < minimum:
+                print(seed)
+                minimum = minimum_location
+        return minimum
+
 def main():
     sample = SeedMaps('aoc2023/day05/sample.txt')
     seeds = SeedMaps('aoc2023/day05/input.txt')
     assert sample.lowest_location() == 35
     print('Answer to Part 1: ', seeds.lowest_location())
-    print('Answer to Part 2: ', -1)
+
+    assert sample.lowest_by_ranges() == 46
+    print('Answer to Part 2: ', seeds.lowest_by_ranges())
 
 if __name__ == '__main__':
     main()

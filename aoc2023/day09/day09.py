@@ -12,9 +12,9 @@ def extrapolate_sequence(sequence: list[int], forwards:bool=True):
         return sum(tail_differences)
 
     diff = 0
-    for i in head_differences[1:]:
-        diff -= i
-    return head_differences[0] + diff
+    for i in head_differences[::-1]:
+        diff = i - diff
+    return diff
 
 class Oasis:
     def __init__(self, file_name):
@@ -42,7 +42,7 @@ def main():
     assert extrapolate_sequence([0, 3, 6, 9, 12, 15], forwards=False) == -3
     assert extrapolate_sequence([1, 3, 6, 10, 15, 21], forwards=False) == 0
     assert extrapolate_sequence([10, 13, 16, 21, 30, 45], forwards=False) == 5
-    assert sample.extrapolate_values() == 2
+    assert sample.extrapolate_values(forwards=False) == 2
     print('Answer to part 2: ', oasis.extrapolate_values(forwards=False))
 
 if __name__ == '__main__':

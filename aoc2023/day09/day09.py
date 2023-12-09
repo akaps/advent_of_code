@@ -2,15 +2,19 @@ import re
 import numpy
 
 def extrapolate_sequence(sequence: list[int], forwards:bool=True):
-    differences = []
+    tail_differences = []
+    head_differences = []
     while sequence[-1] != 0:
-        differences.append(sequence[-1 if forwards else 0])
+        tail_differences.append(sequence[-1])
+        head_differences.append(sequence[0])
         sequence = numpy.diff(sequence)
     if forwards:
-        return sum(differences)
-    while len(differences) > 1:
-        differences = numpy.diff(differences)
-    return differences[0]
+        return sum(tail_differences)
+
+    diff = 0
+    for i in head_differences[1:]:
+        diff -= i
+    return head_differences[0] + diff
 
 class Oasis:
     def __init__(self, file_name):
@@ -35,7 +39,10 @@ def main():
     oasis = Oasis('aoc2023/day09/input.txt')
     print('Answer to part 1: ', oasis.extrapolate_values())
 
+    assert extrapolate_sequence([0, 3, 6, 9, 12, 15], forwards=False) == -3
+    assert extrapolate_sequence([1, 3, 6, 10, 15, 21], forwards=False) == 0
     assert extrapolate_sequence([10, 13, 16, 21, 30, 45], forwards=False) == 5
+    assert sample.extrapolate_values() == 2
     print('Answer to part 2: ', oasis.extrapolate_values(forwards=False))
 
 if __name__ == '__main__':
